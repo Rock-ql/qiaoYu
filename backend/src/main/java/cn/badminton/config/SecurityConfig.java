@@ -11,6 +11,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.http.HttpMethod;
 
 import org.springframework.beans.factory.annotation.Value;
 import java.util.Arrays;
@@ -44,6 +45,9 @@ public class SecurityConfig {
                 .accessDeniedHandler(restAccessDeniedHandler)
             )
             .authorizeHttpRequests(auth -> auth
+                // 允许跨域预检请求
+                .requestMatchers(HttpMethod.OPTIONS, "/api/**").permitAll()
+                // 认证开放接口
                 .requestMatchers("/api/auth/**").permitAll()
                 .anyRequest().authenticated()
             )
@@ -57,12 +61,18 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
         if ("*".equals(allowedOrigins)) {
-            config.setAllowedOrigins(List.of("*"));
+            // 支持凭证时不允许 setAllowedOrigins("*")，需使用通配模式
+            config.addAllowedOriginPattern("*");
         } else {
-            config.setAllowedOrigins(Arrays.asList(allowedOrigins.split(",")));
+            Arrays.stream(allowedOrigins.split(","))
+                    .map(String::trim)
+                    .filter(s -> !s.isEmpty())
+                    .forEach(config::addAllowedOrigin);
         }
         config.setAllowedHeaders(List.of("*"));
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
+        // 暴露部分头，便于前端读取
+        config.setExposedHeaders(List.of("Authorization", "Content-Disposition"));
         return config;
     }
 }
