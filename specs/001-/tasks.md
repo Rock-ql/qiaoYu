@@ -99,10 +99,10 @@ qiaoYu/
 ## Phase 3.7: 前端管理后台实现
 
 ### 后台管理基础框架
-- [ ] T051 [P] 后台登录页面 in frontend-admin/src/views/Login.vue
-- [ ] T052 [P] 后台主框架布局 in frontend-admin/src/layouts/BasicLayout.vue  
-- [ ] T053 [P] 路由配置和权限控制 in frontend-admin/src/router/index.ts
-- [ ] T054 [P] 状态管理配置 in frontend-admin/src/stores/
+- [x] T051 [P] 后台登录页面 in frontend-admin/src/views/Login.vue
+- [x] T052 [P] 后台主框架布局 in frontend-admin/src/layouts/BasicLayout.vue  
+- [x] T053 [P] 路由配置和权限控制 in frontend-admin/src/router/index.ts
+- [x] T054 [P] 状态管理配置 in frontend-admin/src/stores/
 
 ### 业务管理页面
 - [ ] T055 [P] 用户管理页面 in frontend-admin/src/views/user/UserManagement.vue
