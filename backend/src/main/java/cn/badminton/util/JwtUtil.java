@@ -8,6 +8,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
@@ -26,7 +29,16 @@ public class JwtUtil {
 
     private SecretKey getKey() {
         // jjwt 0.12+ 推荐使用 SecretKey
-        return Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+        byte[] raw = secret.getBytes(StandardCharsets.UTF_8);
+        // HS256 需要 >= 256 bits(32 bytes)。若不足则以 SHA-256 派生稳定密钥，避免 WeakKeyException
+        if (raw.length < 32) {
+            try {
+                raw = MessageDigest.getInstance("SHA-256").digest(raw);
+            } catch (NoSuchAlgorithmException ignored) {
+                raw = Arrays.copyOf(raw, 32);
+            }
+        }
+        return Keys.hmacShaKeyFor(raw);
     }
 
     public String generateToken(String userId) {
@@ -49,4 +61,3 @@ public class JwtUtil {
         }
     }
 }
-
