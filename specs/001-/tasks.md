@@ -139,8 +139,8 @@ qiaoYu/
 - [x] T074 [P] 个人中心页面 in miniprogram/pages/user/profile.vue
 
 ### 小程序特殊功能
-- [ ] T075 微信API调用封装 in miniprogram/utils/wechat.js
-- [ ] T076 小程序分享功能配置 (在各页面添加分享配置)
+- [x] T075 微信API调用封装 in miniprogram/utils/wechat.js
+- [x] T076 小程序分享功能配置 (在各页面添加分享配置)
 
 ## Phase 3.10: 系统集成和优化
 
@@ -152,19 +152,19 @@ qiaoYu/
 ### 性能优化
 - [x] T080 [P] Redis连接池优化和监控 in backend/src/main/java/cn/badminton/config/
 - [x] T081 [P] 前端构建优化和代码分割 in frontend-*/vite.config.ts
-- [ ] T082 [P] 小程序性能优化配置 in miniprogram/
+- [x] T082 [P] 小程序性能优化配置 in miniprogram/
 
 ## Phase 3.11: 测试和文档完善
 
 ### 单元测试
-- [ ] T083 [P] 业务服务单元测试 in backend/src/test/java/unit/service/
-- [ ] T084 [P] 工具类单元测试 in backend/src/test/java/unit/util/
-- [ ] T085 [P] 前端组件单元测试 in frontend-*/src/tests/
+- [x] T083 [P] 业务服务单元测试 in backend/src/test/java/unit/service/
+- [x] T084 [P] 工具类单元测试 in backend/src/test/java/unit/util/
+- [x] T085 [P] 前端组件单元测试 in frontend-*/src/tests/
 
 ### 系统测试
-- [ ] T086 端到端测试：完整约球流程 (执行quickstart.md场景验证)
-- [ ] T087 性能测试：API响应时间<200ms验证
-- [ ] T088 [P] 文档更新：API文档和用户手册 in docs/
+- [x] T086 端到端测试：完整约球流程 (执行quickstart.md场景验证)
+- [x] T087 性能测试：API响应时间<200ms验证
+- [x] T088 [P] 文档更新：API文档和用户手册 in docs/
 
 ## 依赖关系
 

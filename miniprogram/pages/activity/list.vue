@@ -14,6 +14,9 @@ export default {
   onLoad() {
     api.post('/activity/available', {}).then(res => { this.list = res || [] })
   },
+  onShareAppMessage() {
+    return { title: '活动列表 - 羽毛球约球', path: '/pages/activity/list' }
+  },
   methods: {
     openDetail(id) { uni.navigateTo({ url: '/pages/activity/detail?id=' + id }) }
   }
@@ -24,4 +27,3 @@ export default {
 .container { padding: 24rpx; }
 .item { padding: 16rpx 0; border-bottom: 1px solid #eee; }
 </style>
-
