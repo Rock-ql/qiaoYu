@@ -76,13 +76,13 @@ qiaoYu/
 ## Phase 3.5: API控制器实现
 
 ### 认证相关接口
-- [ ] T040 用户注册登录控制器 in backend/src/main/java/cn/badminton/controller/AuthController.java
-- [ ] T041 微信授权登录端点 (在AuthController中添加/auth/wechat路径)
+- [x] T040 用户注册登录控制器 in backend/src/main/java/cn/badminton/controller/AuthController.java
+- [x] T041 微信授权登录端点 (在AuthController中添加/auth/wechat路径)
 
 ### 业务功能接口
-- [ ] T042 活动管理控制器 in backend/src/main/java/cn/badminton/controller/ActivityController.java
-- [ ] T043 费用管理控制器 in backend/src/main/java/cn/badminton/controller/ExpenseController.java
-- [ ] T044 用户信息控制器 in backend/src/main/java/cn/badminton/controller/UserController.java
+- [x] T042 活动管理控制器 in backend/src/main/java/cn/badminton/controller/ActivityController.java
+- [x] T043 费用管理控制器 in backend/src/main/java/cn/badminton/controller/ExpenseController.java
+- [x] T044 用户信息控制器 in backend/src/main/java/cn/badminton/controller/UserController.java
 
 ## Phase 3.6: 中间件和安全配置
 
