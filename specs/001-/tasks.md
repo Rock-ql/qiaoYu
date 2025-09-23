@@ -127,16 +127,16 @@ qiaoYu/
 ## Phase 3.9: 微信小程序实现
 
 ### 小程序基础配置
-- [ ] T067 [P] 小程序基础配置和页面结构 in miniprogram/app.json
-- [ ] T068 [P] 微信授权登录页面 in miniprogram/pages/auth/login.vue
-- [ ] T069 [P] 小程序主页标签页 in miniprogram/pages/index/index.vue
+- [x] T067 [P] 小程序基础配置和页面结构 in miniprogram/app.json
+- [x] T068 [P] 微信授权登录页面 in miniprogram/pages/auth/login.vue
+- [x] T069 [P] 小程序主页标签页 in miniprogram/pages/index/index.vue
 
 ### 小程序业务页面
-- [ ] T070 [P] 活动列表页面 in miniprogram/pages/activity/list.vue
-- [ ] T071 [P] 活动详情页面 in miniprogram/pages/activity/detail.vue
-- [ ] T072 [P] 发起约球页面 in miniprogram/pages/activity/create.vue
-- [ ] T073 [P] 费用分摊页面 in miniprogram/pages/expense/share.vue
-- [ ] T074 [P] 个人中心页面 in miniprogram/pages/user/profile.vue
+- [x] T070 [P] 活动列表页面 in miniprogram/pages/activity/list.vue
+- [x] T071 [P] 活动详情页面 in miniprogram/pages/activity/detail.vue
+- [x] T072 [P] 发起约球页面 in miniprogram/pages/activity/create.vue
+- [x] T073 [P] 费用分摊页面 in miniprogram/pages/expense/share.vue
+- [x] T074 [P] 个人中心页面 in miniprogram/pages/user/profile.vue
 
 ### 小程序特殊功能
 - [ ] T075 微信API调用封装 in miniprogram/utils/wechat.js
@@ -147,7 +147,7 @@ qiaoYu/
 ### API集成
 - [x] T077 [P] 后台管理系统API集成 in frontend-admin/src/api/
 - [x] T078 [P] H5移动端API集成 in frontend-h5/src/api/
-- [ ] T079 [P] 小程序API集成 in miniprogram/api/
+- [x] T079 [P] 小程序API集成 in miniprogram/api/
 
 ### 性能优化
 - [x] T080 [P] Redis连接池优化和监控 in backend/src/main/java/cn/badminton/config/
