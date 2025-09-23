@@ -1,0 +1,44 @@
+spring:
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      lettuce:
+        pool:
+          max-active: 16
+          max-idle: 8
+          min-idle: 2
+          max-wait: 5s
+
+server:
+  port: 8080
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  metrics:
+    enable:
+      jvm: true
+      process: true
+
+jwt:
+  # 注意：HMAC-SHA(HS256/384/512)密钥长度需>=256 bits(32字节)
+  # 默认提供安全长度示例，请在生产环境使用更安全的随机密钥
+  secret: badminton-secret-please-change-to-32bytes-or-longer-2025
+  expireMinutes: 43200
+
+app:
+  security:
+    cors:
+      allowed-origins: "*"
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    tryItOutEnabled: true
+    operationsSorter: alpha
+    tagsSorter: alpha
+  api-docs:
+    path: /v3/api-docs

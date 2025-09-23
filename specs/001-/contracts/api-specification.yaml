@@ -1,0 +1,717 @@
+openapi: 3.0.3
+info:
+  title: 羽毛球约球与消费记录系统API
+  description: 支持约球活动创建、好友邀请、费用记录和分摊的RESTful API
+  version: 1.0.0
+  contact:
+    name: API Support
+    email: support@badminton.com
+
+servers:
+  - url: http://localhost:8080/api
+    description: 开发环境
+  - url: https://api.badminton.com/api
+    description: 生产环境
+
+paths:
+  # 用户认证
+  /auth/register:
+    post:
+      summary: 用户注册
+      tags: [认证]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [phone, nickname, password]
+              properties:
+                phone:
+                  type: string
+                  pattern: '^1[3-9]\d{9}$'
+                  description: 手机号
+                nickname:
+                  type: string
+                  minLength: 2
+                  maxLength: 20
+                  description: 用户昵称
+                password:
+                  type: string
+                  minLength: 6
+                  maxLength: 20
+                  description: 密码
+                avatar:
+                  type: string
+                  format: uri
+                  description: 头像URL
+      responses:
+        '201':
+          description: 注册成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '400':
+          description: 请求参数错误
+        '409':
+          description: 手机号已存在
+
+  /auth/login:
+    post:
+      summary: 用户登录
+      tags: [认证]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [phone, password]
+              properties:
+                phone:
+                  type: string
+                  pattern: '^1[3-9]\d{9}$'
+                password:
+                  type: string
+      responses:
+        '200':
+          description: 登录成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          token:
+                            type: string
+                            description: JWT访问令牌
+                          user:
+                            $ref: '#/components/schemas/User'
+        '401':
+          description: 用户名或密码错误
+
+  # 约球活动管理
+  /activities:
+    get:
+      summary: 获取活动列表
+      tags: [约球活动]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: size
+          in: query
+          schema:
+            type: integer
+            minimum: 10
+            maximum: 50
+            default: 20
+        - name: status
+          in: query
+          schema:
+            type: integer
+            enum: [1, 2, 3, 4]
+            description: 活动状态
+        - name: date
+          in: query
+          schema:
+            type: string
+            format: date
+            description: 按日期筛选
+      responses:
+        '200':
+          description: 获取成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          list:
+                            type: array
+                            items:
+                              $ref: '#/components/schemas/BookingActivity'
+                          total:
+                            type: integer
+                          page:
+                            type: integer
+                          size:
+                            type: integer
+
+    post:
+      summary: 创建约球活动
+      tags: [约球活动]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [title, venue, startTime, endTime, maxPlayers]
+              properties:
+                title:
+                  type: string
+                  minLength: 5
+                  maxLength: 50
+                  description: 活动标题
+                venue:
+                  type: string
+                  maxLength: 100
+                  description: 场地名称
+                address:
+                  type: string
+                  maxLength: 200
+                  description: 详细地址
+                startTime:
+                  type: string
+                  format: date-time
+                  description: 开始时间
+                endTime:
+                  type: string
+                  format: date-time
+                  description: 结束时间
+                maxPlayers:
+                  type: integer
+                  minimum: 2
+                  maximum: 20
+                  description: 最大人数
+                fee:
+                  type: number
+                  minimum: 0
+                  multipleOf: 0.01
+                  description: 预估费用
+                description:
+                  type: string
+                  maxLength: 500
+                  description: 活动描述
+      responses:
+        '201':
+          description: 创建成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/BookingActivity'
+
+  /activities/{id}:
+    get:
+      summary: 获取活动详情
+      tags: [约球活动]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 获取成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        allOf:
+                          - $ref: '#/components/schemas/BookingActivity'
+                          - type: object
+                            properties:
+                              participants:
+                                type: array
+                                items:
+                                  $ref: '#/components/schemas/User'
+                              expenses:
+                                type: array
+                                items:
+                                  $ref: '#/components/schemas/ExpenseRecord'
+
+    put:
+      summary: 更新活动信息
+      tags: [约球活动]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  minLength: 5
+                  maxLength: 50
+                venue:
+                  type: string
+                  maxLength: 100
+                address:
+                  type: string
+                  maxLength: 200
+                startTime:
+                  type: string
+                  format: date-time
+                endTime:
+                  type: string
+                  format: date-time
+                maxPlayers:
+                  type: integer
+                  minimum: 2
+                  maximum: 20
+                fee:
+                  type: number
+                  minimum: 0
+                  multipleOf: 0.01
+                description:
+                  type: string
+                  maxLength: 500
+                status:
+                  type: integer
+                  enum: [1, 2, 3, 4]
+      responses:
+        '200':
+          description: 更新成功
+        '403':
+          description: 无权限操作
+        '404':
+          description: 活动不存在
+
+  /activities/{id}/join:
+    post:
+      summary: 参加活动
+      tags: [约球活动]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 参加成功
+        '400':
+          description: 活动已满或状态不允许
+        '409':
+          description: 已参加该活动
+
+  /activities/{id}/leave:
+    post:
+      summary: 退出活动
+      tags: [约球活动]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 退出成功
+        '400':
+          description: 活动状态不允许退出
+        '404':
+          description: 未参加该活动
+
+  # 费用管理
+  /activities/{id}/expenses:
+    get:
+      summary: 获取活动费用列表
+      tags: [费用管理]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 获取成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          allOf:
+                            - $ref: '#/components/schemas/ExpenseRecord'
+                            - type: object
+                              properties:
+                                shares:
+                                  type: array
+                                  items:
+                                    $ref: '#/components/schemas/ExpenseShare'
+
+    post:
+      summary: 添加费用记录
+      tags: [费用管理]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [type, description, totalAmount, participants]
+              properties:
+                type:
+                  type: string
+                  enum: [venue, food, transport, other]
+                  description: 费用类型
+                description:
+                  type: string
+                  maxLength: 200
+                  description: 费用描述
+                totalAmount:
+                  type: number
+                  minimum: 0.01
+                  multipleOf: 0.01
+                  description: 总金额
+                splitMethod:
+                  type: string
+                  enum: [equal, custom]
+                  default: equal
+                  description: 分摊方式
+                participants:
+                  type: array
+                  items:
+                    type: object
+                    required: [userId]
+                    properties:
+                      userId:
+                        type: string
+                      amount:
+                        type: number
+                        minimum: 0
+                        multipleOf: 0.01
+                        description: 自定义分摊金额(custom模式必填)
+      responses:
+        '201':
+          description: 添加成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/ExpenseRecord'
+
+  /expenses/{id}:
+    delete:
+      summary: 删除费用记录
+      tags: [费用管理]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 删除成功
+        '403':
+          description: 无权限操作
+        '404':
+          description: 费用记录不存在
+
+  # 用户管理
+  /users/profile:
+    get:
+      summary: 获取用户资料
+      tags: [用户管理]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: 获取成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/User'
+
+    put:
+      summary: 更新用户资料
+      tags: [用户管理]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nickname:
+                  type: string
+                  minLength: 2
+                  maxLength: 20
+                avatar:
+                  type: string
+                  format: uri
+      responses:
+        '200':
+          description: 更新成功
+
+  /users/statistics:
+    get:
+      summary: 获取用户统计信息
+      tags: [用户管理]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: 获取成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          totalActivities:
+                            type: integer
+                            description: 参与活动总数
+                          totalExpense:
+                            type: number
+                            description: 总消费金额
+                          pendingPayments:
+                            type: number
+                            description: 待结算金额
+                          monthlyStats:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                month:
+                                  type: string
+                                  format: date
+                                activities:
+                                  type: integer
+                                expense:
+                                  type: number
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    ApiResponse:
+      type: object
+      required: [code, message, success]
+      properties:
+        code:
+          type: integer
+          description: 响应状态码
+        message:
+          type: string
+          description: 响应消息
+        success:
+          type: boolean
+          description: 请求是否成功
+        timestamp:
+          type: string
+          format: date-time
+          description: 响应时间
+
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          description: 用户ID
+        phone:
+          type: string
+          description: 手机号
+        nickname:
+          type: string
+          description: 昵称
+        avatar:
+          type: string
+          format: uri
+          description: 头像URL
+        status:
+          type: integer
+          enum: [1, 2]
+          description: 状态 1-正常 2-禁用
+        createdAt:
+          type: string
+          format: date-time
+          description: 创建时间
+        totalActivities:
+          type: integer
+          description: 参与活动总数
+        totalExpense:
+          type: number
+          description: 总消费金额
+
+    BookingActivity:
+      type: object
+      properties:
+        id:
+          type: string
+          description: 活动ID
+        title:
+          type: string
+          description: 活动标题
+        organizer:
+          type: string
+          description: 发起人用户ID
+        organizerInfo:
+          $ref: '#/components/schemas/User'
+        venue:
+          type: string
+          description: 场地名称
+        address:
+          type: string
+          description: 详细地址
+        startTime:
+          type: string
+          format: date-time
+          description: 开始时间
+        endTime:
+          type: string
+          format: date-time
+          description: 结束时间
+        maxPlayers:
+          type: integer
+          description: 最大人数
+        currentPlayers:
+          type: integer
+          description: 当前人数
+        fee:
+          type: number
+          description: 预估费用
+        description:
+          type: string
+          description: 活动描述
+        status:
+          type: integer
+          enum: [1, 2, 3, 4]
+          description: 状态 1-待确认 2-进行中 3-已完成 4-已取消
+        createdAt:
+          type: string
+          format: date-time
+          description: 创建时间
+        updatedAt:
+          type: string
+          format: date-time
+          description: 更新时间
+
+    ExpenseRecord:
+      type: object
+      properties:
+        id:
+          type: string
+          description: 费用记录ID
+        activityId:
+          type: string
+          description: 关联活动ID
+        payerId:
+          type: string
+          description: 支付人用户ID
+        payerInfo:
+          $ref: '#/components/schemas/User'
+        type:
+          type: string
+          enum: [venue, food, transport, other]
+          description: 费用类型
+        description:
+          type: string
+          description: 费用描述
+        totalAmount:
+          type: number
+          description: 总金额
+        splitMethod:
+          type: string
+          enum: [equal, custom]
+          description: 分摊方式
+        createdAt:
+          type: string
+          format: date-time
+          description: 创建时间
+
+    ExpenseShare:
+      type: object
+      properties:
+        id:
+          type: string
+          description: 分摊记录ID
+        expenseId:
+          type: string
+          description: 费用记录ID
+        userId:
+          type: string
+          description: 分摊用户ID
+        userInfo:
+          $ref: '#/components/schemas/User'
+        amount:
+          type: number
+          description: 应付金额
+        status:
+          type: integer
+          enum: [1, 2]
+          description: 状态 1-待结算 2-已结算
+        settledAt:
+          type: string
+          format: date-time
+          description: 结算时间

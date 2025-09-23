@@ -1,0 +1,67 @@
+name: CI
+
+on:
+  push:
+    branches: [ "**" ]
+  pull_request:
+    branches: [ "**" ]
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+      - name: Build Backend (skip tests)
+        working-directory: backend
+        run: |
+          chmod +x mvnw
+          ./mvnw -DskipTests package
+      - name: Upload backend jar
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-jar
+          path: backend/target/*-SNAPSHOT.jar
+
+  frontend-admin:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install & Test & Build (admin)
+        working-directory: frontend-admin
+        run: |
+          npm ci || npm install
+          npm run test:unit --silent
+          npm run build --silent
+      - name: Upload admin dist
+        uses: actions/upload-artifact@v4
+        with:
+          name: admin-dist
+          path: frontend-admin/dist
+
+  frontend-h5:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install & Test & Build (h5)
+        working-directory: frontend-h5
+        run: |
+          npm ci || npm install
+          npm run test:unit --silent
+          npm run build --silent
+      - name: Upload h5 dist
+        uses: actions/upload-artifact@v4
+        with:
+          name: h5-dist
+          path: frontend-h5/dist
+

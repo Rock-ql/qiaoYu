@@ -1,0 +1,8 @@
+target
+node_modules
+.idea
+.git
+**/.DS_Store
+frontend-admin/dist
+frontend-h5/dist
+

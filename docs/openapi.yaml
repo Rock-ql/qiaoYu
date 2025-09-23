@@ -1,0 +1,468 @@
+openapi: 3.0.3
+info:
+  title: 羽毛球约球与消费记录系统 API
+  version: 0.1.0
+  description: 后端 REST API（统一Result包装，认证采用JWT Bearer）。
+servers:
+  - url: http://localhost:8080
+    description: 本地开发环境
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Result:
+      type: object
+      properties:
+        code: { type: integer, example: 0 }
+        message: { type: string, example: success }
+        data: { description: 载荷，类型随接口而定 }
+    AuthResponse:
+      type: object
+      properties:
+        token: { type: string, example: eyJhbGciOiJIUzI1NiJ9... }
+        user:
+          $ref: '#/components/schemas/UserResponse'
+    UserResponse:
+      type: object
+      properties:
+        id: { type: string }
+        phone: { type: string }
+        nickname: { type: string }
+        avatar: { type: string }
+        status: { type: integer, enum: [1,2] }
+    RegisterRequest:
+      type: object
+      required: [phone, nickname, password]
+      properties:
+        phone: { type: string, example: 13800138001 }
+        nickname: { type: string, example: 测试用户 }
+        password: { type: string, format: password, example: 123456 }
+    LoginRequest:
+      type: object
+      required: [phone, password]
+      properties:
+        phone: { type: string, example: 13800138001 }
+        password: { type: string, format: password, example: 123456 }
+    WechatLoginRequest:
+      type: object
+      required: [code]
+      properties:
+        code: { type: string }
+        encryptedData: { type: string }
+        iv: { type: string }
+    CreateActivityRequest:
+      type: object
+      required: [organizerId, title, venue, startTime, endTime, maxPlayers]
+      properties:
+        organizerId: { type: string }
+        title: { type: string }
+        venue: { type: string }
+        startTime: { type: string, format: date-time }
+        endTime: { type: string, format: date-time }
+        maxPlayers: { type: integer }
+        description: { type: string }
+        address: { type: string }
+    JoinActivityRequest:
+      type: object
+      required: [activityId, userId]
+      properties:
+        activityId: { type: string }
+        userId: { type: string }
+        remark: { type: string }
+    ActivityIdRequest:
+      type: object
+      required: [activityId]
+      properties:
+        activityId: { type: string }
+    ActivitiesByStatusRequest:
+      type: object
+      required: [status]
+      properties:
+        status: { type: integer }
+    ActivitiesByTimeRangeRequest:
+      type: object
+      required: [startTime, endTime]
+      properties:
+        startTime: { type: string, format: date-time }
+        endTime: { type: string, format: date-time }
+    CreateExpenseRequest:
+      type: object
+      required: [activityId, payerId, title, totalAmount]
+      properties:
+        activityId: { type: string }
+        payerId: { type: string }
+        title: { type: string }
+        totalAmount: { type: number, format: double }
+        description: { type: string }
+        shareType: { type: integer, enum: [1,2] }
+    CreateExpenseSharesRequest:
+      type: object
+      required: [expenseId, participantIds]
+      properties:
+        expenseId: { type: string }
+        participantIds: { type: array, items: { type: string } }
+        customAmounts:
+          type: object
+          additionalProperties: { type: number, format: double }
+    ConfirmShareRequest:
+      type: object
+      required: [shareId, userId]
+      properties:
+        shareId: { type: string }
+        userId: { type: string }
+    MarkPaidRequest:
+      type: object
+      required: [shareId, userId]
+      properties:
+        shareId: { type: string }
+        userId: { type: string }
+    ExpenseIdRequest:
+      type: object
+      required: [expenseId]
+      properties:
+        expenseId: { type: string }
+    UserIdRequest:
+      type: object
+      required: [userId]
+      properties:
+        userId: { type: string }
+    UpdateUserRequest:
+      type: object
+      required: [userId, nickname]
+      properties:
+        userId: { type: string }
+        nickname: { type: string }
+        avatar: { type: string }
+paths:
+  /api/auth/register:
+    post:
+      summary: 用户注册
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/RegisterRequest' }
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Result'
+                  - type: object
+                    properties:
+                      data: { $ref: '#/components/schemas/AuthResponse' }
+  /api/auth/login:
+    post:
+      summary: 用户登录
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/LoginRequest' }
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Result'
+                  - type: object
+                    properties:
+                      data: { $ref: '#/components/schemas/AuthResponse' }
+  /api/auth/wechat:
+    post:
+      summary: 微信授权登录
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/WechatLoginRequest' }
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Result'
+                  - type: object
+                    properties:
+                      data: { $ref: '#/components/schemas/AuthResponse' }
+  /api/activity/create:
+    post:
+      summary: 创建活动
+      security: [ { bearerAuth: [] } ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/CreateActivityRequest' }
+      responses:
+        '200': { description: 成功, content: { application/json: { schema: { $ref: '#/components/schemas/Result' } } } }
+  /api/activity/join:
+    post:
+      summary: 参加活动
+      security: [ { bearerAuth: [] } ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/JoinActivityRequest' }
+      responses:
+        '200': { description: 成功, content: { application/json: { schema: { $ref: '#/components/schemas/Result' } } } }
+  /api/activity/leave:
+    post:
+      summary: 退出活动
+      security: [ { bearerAuth: [] } ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/JoinActivityRequest' }
+      responses:
+        '200': { description: 成功, content: { application/json: { schema: { $ref: '#/components/schemas/Result' } } } }
+  /api/activity/cancel:
+    post:
+      summary: 取消活动（仅发起人）
+      security: [ { bearerAuth: [] } ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/JoinActivityRequest' }
+      responses:
+        '200': { description: 成功, content: { application/json: { schema: { $ref: '#/components/schemas/Result' } } } }
+  /api/activity/start:
+    post:
+      summary: 开始活动（仅发起人）
+      security: [ { bearerAuth: [] } ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/JoinActivityRequest' }
+      responses:
+        '200': { description: 成功, content: { application/json: { schema: { $ref: '#/components/schemas/Result' } } } }
+  /api/activity/complete:
+    post:
+      summary: 完成活动（仅发起人）
+    
+      security: [ { bearerAuth: [] } ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/JoinActivityRequest' }
+      responses:
+        '200': { description: 成功, content: { application/json: { schema: { $ref: '#/components/schemas/Result' } } } }
+  /api/activity/detail:
+    post:
+      summary: 活动详情
+      security: [ { bearerAuth: [] } ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ActivityIdRequest' }
+      responses:
+        '200': { description: 成功, content: { application/json: { schema: { $ref: '#/components/schemas/Result' } } } }
+  /api/activity/available:
+    post:
+      summary: 可参加活动列表
+      security: [ { bearerAuth: [] } ]
+      responses:
+        '200': { description: 成功, content: { application/json: { schema: { $ref: '#/components/schemas/Result' } } } }
+  /api/activity/byStatus:
+    post:
+      summary: 按状态查询活动
+      security: [ { bearerAuth: [] } ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ActivitiesByStatusRequest' }
+      responses:
+        '200': { description: 成功, content: { application/json: { schema: { $ref: '#/components/schemas/Result' } } } }
+  /api/activity/byOrganizer:
+    post:
+      summary: 按发起人查询活动
+      security: [ { bearerAuth: [] } ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/UserIdRequest' }
+      responses:
+        '200': { description: 成功, content: { application/json: { schema: { $ref: '#/components/schemas/Result' } } } }
+  /api/activity/byTimeRange:
+    post:
+      summary: 按时间范围查询活动
+      security: [ { bearerAuth: [] } ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ActivitiesByTimeRangeRequest' }
+      responses:
+        '200': { description: 成功, content: { application/json: { schema: { $ref: '#/components/schemas/Result' } } } }
+  /api/expense/create:
+    post:
+      summary: 创建费用记录
+      security: [ { bearerAuth: [] } ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/CreateExpenseRequest' }
+      responses:
+        '200': { description: 成功, content: { application/json: { schema: { $ref: '#/components/schemas/Result' } } } }
+  /api/expense/shares:
+    post:
+      summary: 创建费用分摊
+      security: [ { bearerAuth: [] } ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/CreateExpenseSharesRequest' }
+      responses:
+        '200': { description: 成功, content: { application/json: { schema: { $ref: '#/components/schemas/Result' } } } }
+  /api/expense/confirm:
+    post:
+      summary: 确认分摊
+      security: [ { bearerAuth: [] } ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ConfirmShareRequest' }
+      responses:
+        '200': { description: 成功, content: { application/json: { schema: { $ref: '#/components/schemas/Result' } } } }
+  /api/expense/paid:
+    post:
+      summary: 标记为已支付
+      security: [ { bearerAuth: [] } ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/MarkPaidRequest' }
+      responses:
+        '200': { description: 成功, content: { application/json: { schema: { $ref: '#/components/schemas/Result' } } } }
+  /api/expense/activityExpenses:
+    post:
+      summary: 获取活动费用记录
+      security: [ { bearerAuth: [] } ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ActivityIdRequest' }
+      responses:
+        '200': { description: 成功, content: { application/json: { schema: { $ref: '#/components/schemas/Result' } } } }
+  /api/expense/expenseShares:
+    post:
+      summary: 获取费用分摊记录
+      security: [ { bearerAuth: [] } ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ExpenseIdRequest' }
+      responses:
+        '200': { description: 成功, content: { application/json: { schema: { $ref: '#/components/schemas/Result' } } } }
+  /api/expense/userShares:
+    post:
+      summary: 获取用户分摊记录
+      security: [ { bearerAuth: [] } ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/UserIdRequest' }
+      responses:
+        '200': { description: 成功, content: { application/json: { schema: { $ref: '#/components/schemas/Result' } } } }
+  /api/expense/delete:
+    post:
+      summary: 删除费用记录（仅付款人）
+      security: [ { bearerAuth: [] } ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ExpenseIdRequest' }
+      responses:
+        '200': { description: 成功, content: { application/json: { schema: { $ref: '#/components/schemas/Result' } } } }
+  /api/user/detail:
+    post:
+      summary: 用户详情
+      security: [ { bearerAuth: [] } ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/UserIdRequest' }
+      responses:
+        '200': { description: 成功, content: { application/json: { schema: { $ref: '#/components/schemas/Result' } } } }
+  /api/user/list:
+    post:
+      summary: 用户列表
+      security: [ { bearerAuth: [] } ]
+      responses:
+        '200': { description: 成功, content: { application/json: { schema: { $ref: '#/components/schemas/Result' } } } }
+  /api/user/updateProfile:
+    post:
+      summary: 更新用户资料
+      security: [ { bearerAuth: [] } ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/UpdateUserRequest' }
+      responses:
+        '200': { description: 成功, content: { application/json: { schema: { $ref: '#/components/schemas/Result' } } } }
+  /api/user/updateAvatar:
+    post:
+      summary: 更新用户头像
+      security: [ { bearerAuth: [] } ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [userId]
+              properties:
+                userId: { type: string }
+                avatar: { type: string }
+      responses:
+        '200': { description: 成功, content: { application/json: { schema: { $ref: '#/components/schemas/Result' } } } }
+  /api/user/disable:
+    post:
+      summary: 禁用用户
+      security: [ { bearerAuth: [] } ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/UserIdRequest' }
+      responses:
+        '200': { description: 成功, content: { application/json: { schema: { $ref: '#/components/schemas/Result' } } } }
+  /api/user/enable:
+    post:
+      summary: 启用用户
+      security: [ { bearerAuth: [] } ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/UserIdRequest' }
+      responses:
+        '200': { description: 成功, content: { application/json: { schema: { $ref: '#/components/schemas/Result' } } } }
+
