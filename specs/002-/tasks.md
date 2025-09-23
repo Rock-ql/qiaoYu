@@ -35,8 +35,8 @@
 ### 组件集成测试 [P]
 - [x] T009 [P] 登录页面集成测试 `frontend-admin/tests/views/Login.test.ts`
 - [x] T010 [P] 用户管理页面集成测试 `frontend-admin/tests/views/UserManagement.test.ts`
-- [ ] T011 [P] 活动管理页面集成测试 `frontend-admin/tests/views/ActivityManagement.test.ts`
-- [ ] T012 [P] 费用统计页面集成测试 `frontend-admin/tests/views/ExpenseStatistics.test.ts`
+- [x] T011 [P] 活动管理页面集成测试 `frontend-admin/tests/views/ActivityManagement.test.ts`
+- [x] T012 [P] 费用统计页面集成测试 `frontend-admin/tests/views/ExpenseStatistics.test.ts`
 
 ## Phase 3.3: 核心UI组件与状态管理 (测试失败后才开始)
 
