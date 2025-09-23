@@ -1,8 +1,9 @@
 package cn.badminton.exception;
 
 import cn.badminton.common.Result;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.exc.InvalidTypeIdException;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -15,9 +16,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
  * 作者: xiaolei
  */
 @RestControllerAdvice
+@Slf4j
 public class GlobalExceptionHandler {
-
-    private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     @ExceptionHandler(IllegalArgumentException.class)
     public Result<Void> handleIllegalArgument(IllegalArgumentException e) {
@@ -25,7 +25,7 @@ public class GlobalExceptionHandler {
         return Result.fail(4001, e.getMessage());
     }
 
-    @ExceptionHandler({MethodArgumentNotValidException.class, BindException.class, HttpMessageNotReadableException.class})
+    @ExceptionHandler({MethodArgumentNotValidException.class, BindException.class, HttpMessageNotReadableException.class, JsonProcessingException.class, InvalidTypeIdException.class})
     public Result<Void> handleValidation(Exception e) {
         log.warn("请求校验失败: {}", e.getMessage(), e);
         return Result.fail(4000, "请求参数不合法");
@@ -37,4 +37,3 @@ public class GlobalExceptionHandler {
         return Result.fail(5000, "系统异常，请稍后重试");
     }
 }
-
