@@ -59,16 +59,16 @@ const goLogin = () => router.push('/login')
 
       <el-form label-position="top">
         <el-form-item label="手机号">
-          <el-input v-model="phone" placeholder="请输入手机号" clearable :prefix-icon="Iphone" />
+          <el-input v-model="phone" placeholder="请输入手机号" clearable :prefix-icon="Iphone" size="large" />
         </el-form-item>
         <el-form-item label="昵称">
-          <el-input v-model="nickname" placeholder="请输入昵称" clearable :prefix-icon="User" />
+          <el-input v-model="nickname" placeholder="请输入昵称" clearable :prefix-icon="User" size="large" />
         </el-form-item>
         <el-form-item label="密码">
-          <el-input v-model="password" type="password" placeholder="请输入密码" show-password :prefix-icon="Lock" />
+          <el-input v-model="password" type="password" placeholder="请输入密码" show-password :prefix-icon="Lock" size="large" />
         </el-form-item>
         <el-form-item label="确认密码">
-          <el-input v-model="confirmPassword" type="password" placeholder="请再次输入密码" show-password :prefix-icon="Lock" @keyup.enter="onRegister" />
+          <el-input v-model="confirmPassword" type="password" placeholder="请再次输入密码" show-password :prefix-icon="Lock" size="large" @keyup.enter="onRegister" />
         </el-form-item>
         <el-button type="primary" :loading="loading" class="submit-btn" @click="onRegister" size="large">
           {{ loading ? '注册中...' : '注册' }}
@@ -95,21 +95,26 @@ const goLogin = () => router.push('/login')
 
 .register-card {
   width: 100%;
-  max-width: 520px;
+  max-width: 760px; /* 更宽的表单区域，参考 Apple 风格 */
   background: #fff;
   border: 1px solid #eef0f4;
   border-radius: 16px;
   box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
-  padding: 28px 24px 24px;
+  padding: 44px 48px 36px;
 }
 
 .brand { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
 .logo { width: 36px; height: 36px; border-radius: 8px; }
 .title-wrap { display: flex; flex-direction: column; }
-.title { margin: 0; font-size: 20px; color: #1f2937; }
-.subtitle { margin: 2px 0 0; color: #6b7280; font-size: 13px; }
+.title { margin: 0; font-size: 28px; color: #111827; font-weight: 600; }
+.subtitle { margin: 8px 0 0; color: #6b7280; font-size: 14px; }
 
 .mb16 { margin-bottom: 16px; }
-.submit-btn { width: 100%; margin-top: 4px; }
+.submit-btn { width: 100%; margin-top: 8px; height: 48px; }
+.mb16 { margin-bottom: 16px; }
+.extra { margin-top: 8px; text-align: right; color: #6b7280; }
+
+/* 调整表单项间距 */
+:deep(.el-form-item) { margin-bottom: 18px; }
 .extra { margin-top: 8px; text-align: right; color: #6b7280; }
 </style>

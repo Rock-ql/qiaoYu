@@ -56,10 +56,10 @@ const goRegister = () => router.push('/register')
 
       <el-form label-position="top">
         <el-form-item label="手机号">
-          <el-input v-model="phone" placeholder="请输入手机号" clearable :prefix-icon="Iphone" />
+          <el-input v-model="phone" placeholder="请输入手机号" clearable :prefix-icon="Iphone" size="large" />
         </el-form-item>
         <el-form-item label="密码">
-          <el-input v-model="password" type="password" placeholder="请输入密码" show-password :prefix-icon="Lock" @keyup.enter="onLogin" />
+          <el-input v-model="password" type="password" placeholder="请输入密码" show-password :prefix-icon="Lock" size="large" @keyup.enter="onLogin" />
         </el-form-item>
         <el-button type="primary" :loading="loading" class="submit-btn" @click="onLogin" size="large">
           {{ loading ? '登录中...' : '登录' }}
@@ -92,12 +92,12 @@ const goRegister = () => router.push('/register')
 /* 卡片容器 */
 .login-card {
   width: 100%;
-  max-width: 420px;
+  max-width: 760px; /* 更宽的表单区域，参考 Apple 风格 */
   background: #fff;
   border: 1px solid #eef0f4;
   border-radius: 16px;
   box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
-  padding: 28px 24px 24px;
+  padding: 44px 48px 36px;
 }
 
 /* 品牌区域 */
@@ -109,12 +109,15 @@ const goRegister = () => router.push('/register')
 }
 .logo { width: 36px; height: 36px; border-radius: 8px; }
 .title-wrap { display: flex; flex-direction: column; }
-.title { margin: 0; font-size: 20px; color: #1f2937; }
-.subtitle { margin: 2px 0 0; color: #6b7280; font-size: 13px; }
+.title { margin: 0; font-size: 28px; color: #111827; font-weight: 600; }
+.subtitle { margin: 8px 0 0; color: #6b7280; font-size: 14px; }
 
 .mb16 { margin-bottom: 16px; }
-.submit-btn { width: 100%; margin-top: 4px; }
+.submit-btn { width: 100%; margin-top: 8px; height: 48px; }
 .extra { margin-top: 8px; text-align: right; color: #6b7280; }
+
+/* 调整表单项间距 */
+:deep(.el-form-item) { margin-bottom: 18px; }
 
 .footer { margin-top: 16px; color: #6b7280; }
 </style>
