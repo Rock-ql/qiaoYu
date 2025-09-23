@@ -312,6 +312,19 @@ public class BookingActivity extends BaseEntity {
         return maxPlayers - currentPlayers;
     }
 
+    /**
+     * 简单有效性校验
+     * 用于服务层快速判断对象是否满足最基本约束
+     */
+    public boolean isValid() {
+        boolean titleOk = this.title != null && !this.title.trim().isEmpty();
+        boolean organizerOk = this.organizer != null && !this.organizer.trim().isEmpty();
+        boolean venueOk = this.venue != null && !this.venue.trim().isEmpty();
+        boolean timeOk = this.startTime != null && this.endTime != null && this.endTime.isAfter(this.startTime);
+        boolean maxPlayersOk = this.maxPlayers != null && this.maxPlayers >= 2 && this.maxPlayers <= 20;
+        return titleOk && organizerOk && venueOk && timeOk && maxPlayersOk;
+    }
+
     @Override
     public String toString() {
         return "BookingActivity{" +

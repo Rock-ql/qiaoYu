@@ -39,7 +39,7 @@ public class ExpenseService {
      * 创建费用记录
      */
     public ExpenseRecord createExpense(String activityId, String payerId, String title, 
-                                     Double totalAmount, String description, Integer shareType) {
+                                     BigDecimal totalAmount, String description, Integer shareType) {
         logger.info("创建费用记录，活动ID: {}, 付款人: {}, 标题: {}, 金额: {}", activityId, payerId, title, totalAmount);
         
         try {
@@ -56,7 +56,7 @@ public class ExpenseService {
                 throw new IllegalArgumentException("费用标题不能为空");
             }
             
-            if (totalAmount == null || totalAmount <= 0) {
+            if (totalAmount == null || totalAmount.compareTo(BigDecimal.ZERO) <= 0) {
                 throw new IllegalArgumentException("费用金额必须大于0");
             }
             
@@ -72,12 +72,11 @@ public class ExpenseService {
             }
             
             // 创建费用记录
-            ExpenseRecord expense = new ExpenseRecord(activityId, payerId, title.trim(), totalAmount);
-            if (description != null && !description.trim().isEmpty()) {
-                expense.setDescription(description.trim());
-            }
-            if (shareType != null) {
-                expense.setShareType(shareType);
+            ExpenseRecord expense = new ExpenseRecord(activityId, payerId, "other", description != null ? description.trim() : title.trim(), totalAmount);
+            if (shareType != null && shareType == 1) {
+                expense.setSplitMethod("equal");
+            } else if (shareType != null && shareType == 2) {
+                expense.setSplitMethod("custom");
             }
             
             expense = expenseRepository.saveExpense(expense);
@@ -95,7 +94,7 @@ public class ExpenseService {
      * 计算并创建费用分摊
      */
     public List<ExpenseShare> createExpenseShares(String expenseId, List<String> participantIds, 
-                                                Map<String, Double> customAmounts) {
+                                                Map<String, BigDecimal> customAmounts) {
         logger.info("创建费用分摊，费用ID: {}, 参与人数: {}", expenseId, participantIds.size());
         
         try {
@@ -105,8 +104,8 @@ public class ExpenseService {
                 throw new IllegalArgumentException("费用记录不存在");
             }
             
-            if (expense.getStatus() != ExpenseRecord.STATUS_PENDING) {
-                throw new IllegalArgumentException("费用记录已分摊，不能重复分摊");
+            if (expense.getState() != 1) { // state=1表示上架/可用状态
+                throw new IllegalArgumentException("费用记录状态不正确，不能分摊");
             }
             
             if (participantIds == null || participantIds.isEmpty()) {
@@ -121,19 +120,18 @@ public class ExpenseService {
             }
             
             List<ExpenseShare> shares = new ArrayList<>();
-            BigDecimal totalAmount = BigDecimal.valueOf(expense.getTotalAmount());
+            BigDecimal totalAmount = expense.getTotalAmount();
             
-            if (expense.isAverageShare()) {
+            if (expense.isEqualSplit()) {
                 // 平均分摊
                 shares = createAverageShares(expenseId, participantIds, totalAmount);
                 
-            } else if (expense.isByPersonShare()) {
-                // 按人分摊（暂时和平均分摊一样）
-                shares = createAverageShares(expenseId, participantIds, totalAmount);
-                
-            } else if (expense.isCustomShare()) {
+            } else if (expense.isCustomSplit()) {
                 // 自定义分摊
                 shares = createCustomShares(expenseId, participantIds, customAmounts, totalAmount);
+            } else {
+                // 默认平均分摊
+                shares = createAverageShares(expenseId, participantIds, totalAmount);
             }
             
             // 保存分摊记录
@@ -141,9 +139,7 @@ public class ExpenseService {
                 expenseRepository.saveShare(share);
             }
             
-            // 更新费用记录状态
-            expense.markAsShared();
-            expenseRepository.saveExpense(expense);
+            // 费用记录已经保存，无需更新状态
             
             logger.info("创建费用分摊成功，费用ID: {}, 分摊记录数: {}", expenseId, shares.size());
             return shares;
@@ -171,11 +167,11 @@ public class ExpenseService {
                 throw new IllegalArgumentException("只能确认自己的分摊记录");
             }
             
-            if (!share.canConfirm()) {
-                throw new IllegalArgumentException("分摊记录不可确认");
+            if (!share.canSettle()) {
+                throw new IllegalArgumentException("分摊记录不可结算");
             }
             
-            share.confirm();
+            share.settle();
             expenseRepository.saveShare(share);
             
             logger.info("确认分摊成功，分摊ID: {}", shareId);
@@ -204,15 +200,15 @@ public class ExpenseService {
                 throw new IllegalArgumentException("只有分摊者或付款人可以标记为已支付");
             }
             
-            if (!share.canPay()) {
-                throw new IllegalArgumentException("分摊记录不可支付");
+            if (!share.canSettle()) {
+                throw new IllegalArgumentException("分摊记录不可结算");
             }
             
-            share.markAsPaid();
+            share.settle();
             expenseRepository.saveShare(share);
             
             // 增加用户消费金额
-            userService.addUserExpense(share.getUserId(), share.getShareAmount());
+            userService.addUserExpense(share.getUserId(), share.getAmount());
             
             logger.info("标记为已支付成功，分摊ID: {}", shareId);
             
@@ -290,9 +286,9 @@ public class ExpenseService {
                 throw new IllegalArgumentException("只有付款人可以删除费用记录");
             }
             
-            // 检查状态（只有待分摊的记录可以删除）
-            if (expense.getStatus() != ExpenseRecord.STATUS_PENDING) {
-                throw new IllegalArgumentException("已分摊的费用记录不能删除");
+            // 检查状态（只有正常状态的记录可以删除）
+            if (expense.getState() != 1) {
+                throw new IllegalArgumentException("费用记录状态不正确，不能删除");
             }
             
             expenseRepository.deleteExpenseById(expenseId);
@@ -327,7 +323,7 @@ public class ExpenseService {
                 shareAmount = shareAmount.add(BigDecimal.valueOf(0.01));
             }
             
-            ExpenseShare share = new ExpenseShare(expenseId, userId, shareAmount.doubleValue());
+            ExpenseShare share = new ExpenseShare(expenseId, userId, shareAmount);
             shares.add(share);
         }
         
@@ -338,7 +334,7 @@ public class ExpenseService {
      * 创建自定义分摊
      */
     private List<ExpenseShare> createCustomShares(String expenseId, List<String> participantIds, 
-                                                Map<String, Double> customAmounts, BigDecimal totalAmount) {
+                                                Map<String, BigDecimal> customAmounts, BigDecimal totalAmount) {
         if (customAmounts == null || customAmounts.isEmpty()) {
             throw new IllegalArgumentException("自定义分摊金额不能为空");
         }
@@ -348,11 +344,11 @@ public class ExpenseService {
         
         // 计算自定义金额总和
         for (String userId : participantIds) {
-            Double amount = customAmounts.get(userId);
-            if (amount == null || amount <= 0) {
+            BigDecimal amount = customAmounts.get(userId);
+            if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
                 throw new IllegalArgumentException("用户 " + userId + " 的分摊金额无效");
             }
-            customTotal = customTotal.add(BigDecimal.valueOf(amount));
+            customTotal = customTotal.add(amount);
         }
         
         // 验证总金额是否匹配
@@ -362,7 +358,7 @@ public class ExpenseService {
         
         // 创建分摊记录
         for (String userId : participantIds) {
-            Double amount = customAmounts.get(userId);
+            BigDecimal amount = customAmounts.get(userId);
             ExpenseShare share = new ExpenseShare(expenseId, userId, amount);
             shares.add(share);
         }

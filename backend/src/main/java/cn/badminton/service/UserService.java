@@ -9,7 +9,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.math.BigDecimal;
 import java.util.regex.Pattern;
+import java.security.SecureRandom;
 
 /**
  * 用户管理服务
@@ -70,6 +72,60 @@ public class UserService {
     }
 
     /**
+     * 创建微信用户（用于微信授权首次登录时建档）
+     * 说明：
+     * - 自动生成有效的11位手机号（1开头，第二位3-9），避免触发手机号正则限制；
+     * - 使用随机密码并进行加密；
+     * - 设置微信OpenID/UnionID与头像；
+     */
+    public User createWechatUser(String nickname, String wxOpenId, String wxUnionId, String avatarUrl) {
+        logger.info("创建微信新用户，昵称: {}", nickname);
+
+        try {
+            if (wxOpenId == null || wxOpenId.trim().isEmpty()) {
+                throw new IllegalArgumentException("wxOpenId不能为空");
+            }
+
+            // 若已存在则直接返回
+            User existing = userRepository.findByWxOpenId(wxOpenId);
+            if (existing != null) {
+                return existing;
+            }
+
+            String phone = generateValidPhone();
+            while (userRepository.existsByPhone(phone)) {
+                phone = generateValidPhone();
+            }
+
+            String rawPwd = "wx" + System.currentTimeMillis();
+            User user = new User(phone, nickname == null ? "微信用户" : nickname.trim(), passwordEncoder.encode(rawPwd));
+            user.setAvatar(avatarUrl == null ? "" : avatarUrl);
+            user.setWxOpenId(wxOpenId);
+            user.setWxUnionId(wxUnionId == null ? "" : wxUnionId);
+
+            return userRepository.save(user);
+        } catch (Exception e) {
+            logger.error("创建微信用户失败，昵称: {}, 错误信息: {}", nickname, e.getMessage(), e);
+            throw e;
+        }
+    }
+
+    private static final SecureRandom RANDOM = new SecureRandom();
+
+    /**
+     * 生成合法的11位中国手机号：1 + [3-9] + 9位数字
+     */
+    private String generateValidPhone() {
+        int second = 3 + RANDOM.nextInt(7); // 3..9
+        StringBuilder sb = new StringBuilder();
+        sb.append('1').append(second);
+        for (int i = 0; i < 9; i++) {
+            sb.append(RANDOM.nextInt(10));
+        }
+        return sb.toString();
+    }
+
+    /**
      * 根据手机号查找用户
      */
     public User findByPhone(String phone) {
@@ -122,7 +178,7 @@ public class UserService {
         }
         
         try {
-            User user = userRepository.findByWxOpenId(wxOpenId);
+            User user = userRepository.findByWechatOpenId(wxOpenId);
             logger.debug("查找用户结果: {}", user != null ? "找到" : "未找到");
             return user;
             
@@ -230,7 +286,7 @@ public class UserService {
             }
             
             // 检查微信是否已被其他用户绑定
-            User existingWxUser = userRepository.findByWxOpenId(wxOpenId);
+            User existingWxUser = userRepository.findByWechatOpenId(wxOpenId);
             if (existingWxUser != null && !existingWxUser.getId().equals(userId)) {
                 throw new IllegalArgumentException("该微信账号已被其他用户绑定");
             }
@@ -269,7 +325,7 @@ public class UserService {
     /**
      * 增加用户消费金额
      */
-    public void addUserExpense(String userId, Double amount) {
+    public void addUserExpense(String userId, BigDecimal amount) {
         logger.debug("增加用户消费金额，用户ID: {}, 金额: {}", userId, amount);
         
         try {

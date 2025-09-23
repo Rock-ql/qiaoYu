@@ -84,6 +84,18 @@ public class User extends BaseEntity {
         this.password = password;
     }
 
+    /**
+     * 简单有效性校验
+     * 用于服务层快速判断对象是否满足最基本约束
+     */
+    public boolean isValid() {
+        boolean phoneOk = this.phone != null && this.phone.matches("^1[3-9]\\\\d{9}$");
+        boolean nicknameOk = this.nickname != null && this.nickname.trim().length() >= 2;
+        boolean passwordOk = this.password != null && this.password.length() >= 6;
+        boolean statusOk = this.status != null && (this.status == 1 || this.status == 2);
+        return phoneOk && nicknameOk && passwordOk && statusOk;
+    }
+
     // Getter和Setter方法
     public String getPhone() {
         return phone;
