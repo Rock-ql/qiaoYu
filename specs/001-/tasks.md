@@ -118,11 +118,11 @@ qiaoYu/
 - [x] T061 [P] H5路由和状态管理配置 in frontend-h5/src/router/index.ts
 
 ### H5业务页面
-- [ ] T062 [P] 活动列表页面 in frontend-h5/src/views/activity/ActivityList.vue
-- [ ] T063 [P] 活动详情页面 in frontend-h5/src/views/activity/ActivityDetail.vue
-- [ ] T064 [P] 创建活动页面 in frontend-h5/src/views/activity/CreateActivity.vue
-- [ ] T065 [P] 费用记录页面 in frontend-h5/src/views/expense/ExpenseRecord.vue
-- [ ] T066 [P] 个人中心页面 in frontend-h5/src/views/user/Profile.vue
+- [x] T062 [P] 活动列表页面 in frontend-h5/src/views/activity/ActivityList.vue
+- [x] T063 [P] 活动详情页面 in frontend-h5/src/views/activity/ActivityDetail.vue
+- [x] T064 [P] 创建活动页面 in frontend-h5/src/views/activity/CreateActivity.vue
+- [x] T065 [P] 费用记录页面 in frontend-h5/src/views/expense/ExpenseRecord.vue
+- [x] T066 [P] 个人中心页面 in frontend-h5/src/views/user/Profile.vue
 
 ## Phase 3.9: 微信小程序实现
 
