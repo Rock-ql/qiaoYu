@@ -113,9 +113,9 @@ qiaoYu/
 ## Phase 3.8: H5移动端实现
 
 ### H5基础框架
-- [ ] T059 [P] H5登录注册页面 in frontend-h5/src/views/auth/Login.vue
-- [ ] T060 [P] H5主页和导航 in frontend-h5/src/views/Home.vue
-- [ ] T061 [P] H5路由和状态管理配置 in frontend-h5/src/router/index.ts
+- [x] T059 [P] H5登录注册页面 in frontend-h5/src/views/auth/Login.vue
+- [x] T060 [P] H5主页和导航 in frontend-h5/src/views/Home.vue
+- [x] T061 [P] H5路由和状态管理配置 in frontend-h5/src/router/index.ts
 
 ### H5业务页面
 - [ ] T062 [P] 活动列表页面 in frontend-h5/src/views/activity/ActivityList.vue
