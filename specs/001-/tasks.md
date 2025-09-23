@@ -28,21 +28,21 @@ qiaoYu/
 **关键：这些测试必须编写并失败，然后才能开始任何实现**
 
 ### 合约测试 (基于API规范)
-- [ ] T010 [P] 用户注册接口合约测试 in backend/src/test/java/contract/AuthRegisterContractTest.java
-- [ ] T011 [P] 用户登录接口合约测试 in backend/src/test/java/contract/AuthLoginContractTest.java
-- [ ] T012 [P] 微信登录接口合约测试 in backend/src/test/java/contract/WechatLoginContractTest.java
-- [ ] T013 [P] 活动列表接口合约测试 in backend/src/test/java/contract/ActivityListContractTest.java
-- [ ] T014 [P] 创建活动接口合约测试 in backend/src/test/java/contract/ActivityCreateContractTest.java
-- [ ] T015 [P] 参加活动接口合约测试 in backend/src/test/java/contract/ActivityJoinContractTest.java
-- [ ] T016 [P] 费用记录接口合约测试 in backend/src/test/java/contract/ExpenseContractTest.java
-- [ ] T017 [P] 用户信息接口合约测试 in backend/src/test/java/contract/UserProfileContractTest.java
+- [x] T010 [P] 用户注册接口合约测试 in backend/src/test/java/contract/AuthRegisterContractTest.java
+- [x] T011 [P] 用户登录接口合约测试 in backend/src/test/java/contract/AuthLoginContractTest.java
+- [x] T012 [P] 微信登录接口合约测试 in backend/src/test/java/contract/WechatLoginContractTest.java
+- [x] T013 [P] 活动列表接口合约测试 in backend/src/test/java/contract/ActivityListContractTest.java
+- [x] T014 [P] 创建活动接口合约测试 in backend/src/test/java/contract/ActivityCreateContractTest.java
+- [x] T015 [P] 参加活动接口合约测试 in backend/src/test/java/contract/ActivityJoinContractTest.java
+- [x] T016 [P] 费用记录接口合约测试 in backend/src/test/java/contract/ExpenseContractTest.java
+- [x] T017 [P] 用户信息接口合约测试 in backend/src/test/java/contract/UserProfileContractTest.java
 
 ### 集成测试 (基于用户场景)
-- [ ] T018 [P] 用户注册登录流程集成测试 in backend/src/test/java/integration/UserRegistrationFlowTest.java
-- [ ] T019 [P] 微信授权登录流程集成测试 in backend/src/test/java/integration/WechatAuthFlowTest.java
-- [ ] T020 [P] 创建并参加约球活动集成测试 in backend/src/test/java/integration/BookingActivityFlowTest.java
-- [ ] T021 [P] 费用记录和分摊集成测试 in backend/src/test/java/integration/ExpenseManagementFlowTest.java
-- [ ] T022 [P] Redis数据一致性集成测试 in backend/src/test/java/integration/RedisDataConsistencyTest.java
+- [x] T018 [P] 用户注册登录流程集成测试 in backend/src/test/java/integration/UserRegistrationFlowTest.java
+- [x] T019 [P] 微信授权登录流程集成测试 in backend/src/test/java/integration/WechatAuthFlowTest.java
+- [x] T020 [P] 创建并参加约球活动集成测试 in backend/src/test/java/integration/BookingActivityFlowTest.java
+- [x] T021 [P] 费用记录和分摊集成测试 in backend/src/test/java/integration/ExpenseManagementFlowTest.java
+- [x] T022 [P] Redis数据一致性集成测试 in backend/src/test/java/integration/RedisDataConsistencyTest.java
 
 ## Phase 3.3: 核心数据模型实现 (仅在测试失败后)
 
