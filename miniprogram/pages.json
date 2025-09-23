@@ -1,0 +1,48 @@
+{
+  "pages": [
+    {
+      "path": "pages/index/index",
+      "style": {
+        "navigationBarTitleText": "羽毛球约球"
+      }
+    },
+    {
+      "path": "pages/auth/login",
+      "style": {
+        "navigationBarTitleText": "登录"
+      }
+    },
+    {
+      "path": "pages/activity/list",
+      "style": {
+        "navigationBarTitleText": "活动列表"
+      }
+    }
+  ],
+  "globalStyle": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "羽毛球约球",
+    "navigationBarBackgroundColor": "#00C853",
+    "backgroundColor": "#FFFFFF"
+  },
+  "tabBar": {
+    "color": "#7A7E83",
+    "selectedColor": "#00C853",
+    "borderStyle": "black",
+    "backgroundColor": "#ffffff",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "iconPath": "static/tab_home.png",
+        "selectedIconPath": "static/tab_home_active.png",
+        "text": "首页"
+      },
+      {
+        "pagePath": "pages/activity/list",
+        "iconPath": "static/tab_activity.png",
+        "selectedIconPath": "static/tab_activity_active.png",
+        "text": "活动"
+      }
+    ]
+  }
+}

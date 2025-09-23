@@ -1,50 +1,114 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+<!--
+Version: 1.0.0 → 1.0.0 (初始版本)
+Modified Principles: N/A
+Added Sections: All sections (新项目)
+Removed Sections: N/A
+Templates Status: ✅ All templates compatible
+Follow-up TODOs: N/A
+-->
+
+# 羽毛球预约系统 Constitution
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### 一、用户体验至上
+每个功能必须以用户体验为中心设计，界面简洁直观，操作流程不超过3步完成核心功能。所有用户交互都必须在2秒内响应，关键操作提供即时反馈。设计必须考虑移动端优先，支持一键预约和快速查看。
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+**理由**: 羽毛球运动通常是临时性决策，用户需要快速完成预约，复杂的操作会导致用户流失。
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+### 二、社交化增强粘性  
+系统必须内置社交功能来增强用户粘性，包括球友推荐、组局功能、运动数据分享、成就系统。每个预约都可以邀请好友，支持组建固定球队，提供运动轨迹和统计数据展示。
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+**理由**: 羽毛球是社交性运动，通过社交功能可以显著提高用户留存率和活跃度。
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+### 三、数据驱动优化
+所有功能决策必须基于用户行为数据，收集用户预约偏好、时间规律、场地选择等数据。系统必须提供个性化推荐，包括最佳预约时间、推荐场地、匹配球友等功能。
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+**理由**: 通过数据分析可以提供更精准的服务，提升用户满意度和预约成功率。
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+### 四、快速迭代部署
+采用敏捷开发模式，每个功能必须能够独立开发、测试和部署。所有新功能都要先进行A/B测试，验证用户接受度后再全量发布。支持灰度发布和快速回滚机制。
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+**理由**: 用户需求变化快，需要快速响应市场反馈，持续优化产品功能。
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+### 五、可扩展架构设计
+系统架构必须支持高并发预约请求，特别是热门时段的流量峰值。采用微服务架构，支持横向扩展，关键功能有降级预案。数据库设计考虑分库分表，支持多城市部署。
+
+**理由**: 羽毛球预约具有明显的时间集中性特征，需要应对高并发场景。
+
+## 技术标准
+
+### 后端技术栈
+- **框架**: Spring Boot 3.x + MyBatis Plus
+- **数据库**: MySQL 8.0 + Redis 7.0  
+- **消息队列**: RabbitMQ (处理预约通知)
+- **缓存策略**: 热门场地信息缓存，预约状态实时更新
+- **API设计**: RESTful API + WebSocket (实时通知)
+
+### 前端技术栈  
+- **移动端**: 微信小程序 + H5 (主要入口)
+- **PC端**: Vue 3.x + Element Plus (管理端)
+- **UI设计**: 采用羽毛球运动主题色彩，绿色+白色为主色调
+- **交互设计**: 支持手势操作，滑动选择时间和场地
+
+### 数据安全要求
+- 用户个人信息加密存储
+- 支付信息采用第三方支付平台
+- 预约记录保留6个月用于纠纷处理
+- 定期备份关键业务数据
+
+## 功能规范
+
+### 核心功能优先级
+**P0功能** (必须实现):
+- 场地查看和预约
+- 用户注册和登录
+- 支付和退款
+- 预约记录查询
+
+**P1功能** (重要功能):
+- 球友匹配和邀请
+- 场地收藏和推荐  
+- 消息通知系统
+- 用户评价系统
+
+**P2功能** (增值功能):
+- 运动数据统计
+- 积分和会员系统
+- 活动和赛事报名
+- 教练预约服务
+
+### 用户粘性机制
+- 签到奖励: 连续预约给予积分奖励
+- 社交功能: 好友邀请、组队预约、排行榜
+- 个性化推荐: 基于历史数据推荐最佳预约时间
+- 成就系统: 预约次数、运动时长等成就徽章
+- 内容社区: 技巧分享、比赛视频等内容
+
+### 界面设计要求
+- 主色调: 羽毛球绿 (#00C853) + 纯白 (#FFFFFF)
+- 辅助色: 活力橙 (#FF6D00) 用于强调按钮
+- 字体: 苹方/思源黑体，主标题18px，内容14px
+- 图标: 扁平化设计，统一使用羽毛球运动元素
+- 动效: 预约成功要有愉悦的动画效果
+- 适配: 支持暗黑模式，考虑不同屏幕尺寸
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+### 开发流程规范
+所有代码变更必须通过Code Review，测试覆盖率不低于80%。每个API都必须有对应的文档和测试用例。部署前必须经过用户验收测试。
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+### 质量标准
+- 页面加载时间不超过2秒
+- API响应时间P95不超过200ms  
+- 系统可用性不低于99.9%
+- 移动端适配各主流机型
+- 代码遵循阿里巴巴Java开发规范
+
+### 数据监控要求
+- 实时监控预约成功率、支付成功率
+- 跟踪用户行为数据和留存率
+- 监控系统性能指标和异常报警
+- 定期分析用户反馈和评价数据
+
+**Version**: 1.0.0 | **Ratified**: 2025-09-22 | **Last Amended**: 2025-09-22
