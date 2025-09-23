@@ -13,3 +13,6 @@ management:
       exposure:
         include: health,info
 
+jwt:
+  secret: badminton-secret
+  expireMinutes: 43200
