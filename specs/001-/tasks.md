@@ -54,24 +54,24 @@ qiaoYu/
 - [x] T027 [P] 费用分摊实体模型 in backend/src/main/java/cn/badminton/model/ExpenseShare.java
 
 ### Redis存储层
-- [ ] T028 [P] 用户Redis存储库 in backend/src/main/java/cn/badminton/repository/UserRepository.java
-- [ ] T029 [P] 活动Redis存储库 in backend/src/main/java/cn/badminton/repository/ActivityRepository.java
-- [ ] T030 [P] 费用Redis存储库 in backend/src/main/java/cn/badminton/repository/ExpenseRepository.java
-- [ ] T031 Redis配置类 in backend/src/main/java/cn/badminton/config/RedisConfig.java
+- [x] T028 [P] 用户Redis存储库 in backend/src/main/java/cn/badminton/repository/UserRepository.java
+- [x] T029 [P] 活动Redis存储库 in backend/src/main/java/cn/badminton/repository/ActivityRepository.java
+- [x] T030 [P] 费用Redis存储库 in backend/src/main/java/cn/badminton/repository/ExpenseRepository.java
+- [x] T031 Redis配置类 in backend/src/main/java/cn/badminton/config/RedisConfig.java
 
 ## Phase 3.4: 业务服务层实现
 
 ### 核心业务服务
-- [ ] T032 [P] 用户管理服务 in backend/src/main/java/cn/badminton/service/UserService.java
-- [ ] T033 [P] 认证服务(包含微信登录) in backend/src/main/java/cn/badminton/service/AuthService.java
-- [ ] T034 [P] 活动管理服务 in backend/src/main/java/cn/badminton/service/ActivityService.java
-- [ ] T035 [P] 费用管理服务 in backend/src/main/java/cn/badminton/service/ExpenseService.java
-- [ ] T036 [P] 微信API集成服务 in backend/src/main/java/cn/badminton/service/WechatService.java
+- [x] T032 [P] 用户管理服务 in backend/src/main/java/cn/badminton/service/UserService.java
+- [x] T033 [P] 认证服务(包含微信登录) in backend/src/main/java/cn/badminton/service/AuthService.java
+- [x] T034 [P] 活动管理服务 in backend/src/main/java/cn/badminton/service/ActivityService.java
+- [x] T035 [P] 费用管理服务 in backend/src/main/java/cn/badminton/service/ExpenseService.java
+- [x] T036 [P] 微信API集成服务 in backend/src/main/java/cn/badminton/service/WechatService.java
 
 ### DTO和验证
-- [ ] T037 [P] 请求响应DTO类 in backend/src/main/java/cn/badminton/dto/
-- [ ] T038 [P] 数据验证器 in backend/src/main/java/cn/badminton/validator/
-- [ ] T039 统一响应结果类 in backend/src/main/java/cn/badminton/common/Result.java
+- [x] T037 [P] 请求响应DTO类 in backend/src/main/java/cn/badminton/dto/
+- [x] T038 [P] 数据验证器 in backend/src/main/java/cn/badminton/validator/
+- [x] T039 统一响应结果类 in backend/src/main/java/cn/badminton/common/Result.java
 
 ## Phase 3.5: API控制器实现
 
@@ -87,14 +87,14 @@ qiaoYu/
 ## Phase 3.6: 中间件和安全配置
 
 ### 安全和认证
-- [ ] T045 JWT认证配置 in backend/src/main/java/cn/badminton/config/SecurityConfig.java
-- [ ] T046 JWT工具类 in backend/src/main/java/cn/badminton/util/JwtUtil.java
-- [ ] T047 认证过滤器 in backend/src/main/java/cn/badminton/filter/JwtAuthenticationFilter.java
+- [x] T045 JWT认证配置 in backend/src/main/java/cn/badminton/config/SecurityConfig.java
+- [x] T046 JWT工具类 in backend/src/main/java/cn/badminton/util/JwtUtil.java
+- [x] T047 认证过滤器 in backend/src/main/java/cn/badminton/filter/JwtAuthenticationFilter.java
 
 ### 系统配置
-- [ ] T048 全局异常处理器 in backend/src/main/java/cn/badminton/exception/GlobalExceptionHandler.java
-- [ ] T049 CORS和安全头配置 (在SecurityConfig中配置)
-- [ ] T050 请求响应日志拦截器 in backend/src/main/java/cn/badminton/interceptor/LoggingInterceptor.java
+- [x] T048 全局异常处理器 in backend/src/main/java/cn/badminton/exception/GlobalExceptionHandler.java
+- [x] T049 CORS和安全头配置 (在SecurityConfig中配置)
+- [x] T050 请求响应日志拦截器 in backend/src/main/java/cn/badminton/interceptor/LoggingInterceptor.java
 
 ## Phase 3.7: 前端管理后台实现
 
@@ -145,8 +145,8 @@ qiaoYu/
 ## Phase 3.10: 系统集成和优化
 
 ### API集成
-- [ ] T077 [P] 后台管理系统API集成 in frontend-admin/src/api/
-- [ ] T078 [P] H5移动端API集成 in frontend-h5/src/api/
+- [x] T077 [P] 后台管理系统API集成 in frontend-admin/src/api/
+- [x] T078 [P] H5移动端API集成 in frontend-h5/src/api/
 - [ ] T079 [P] 小程序API集成 in miniprogram/api/
 
 ### 性能优化
