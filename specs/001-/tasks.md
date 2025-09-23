@@ -105,10 +105,10 @@ qiaoYu/
 - [x] T054 [P] 状态管理配置 in frontend-admin/src/stores/
 
 ### 业务管理页面
-- [ ] T055 [P] 用户管理页面 in frontend-admin/src/views/user/UserManagement.vue
-- [ ] T056 [P] 活动管理页面 in frontend-admin/src/views/activity/ActivityManagement.vue
-- [ ] T057 [P] 费用统计页面 in frontend-admin/src/views/expense/ExpenseStatistics.vue
-- [ ] T058 [P] 系统设置页面 in frontend-admin/src/views/system/Settings.vue
+- [x] T055 [P] 用户管理页面 in frontend-admin/src/views/user/UserManagement.vue
+- [x] T056 [P] 活动管理页面 in frontend-admin/src/views/activity/ActivityManagement.vue
+- [x] T057 [P] 费用统计页面 in frontend-admin/src/views/expense/ExpenseStatistics.vue
+- [x] T058 [P] 系统设置页面 in frontend-admin/src/views/system/Settings.vue
 
 ## Phase 3.8: H5移动端实现
 
@@ -150,8 +150,8 @@ qiaoYu/
 - [ ] T079 [P] 小程序API集成 in miniprogram/api/
 
 ### 性能优化
-- [ ] T080 [P] Redis连接池优化和监控 in backend/src/main/java/cn/badminton/config/
-- [ ] T081 [P] 前端构建优化和代码分割 in frontend-*/vite.config.ts
+- [x] T080 [P] Redis连接池优化和监控 in backend/src/main/java/cn/badminton/config/
+- [x] T081 [P] 前端构建优化和代码分割 in frontend-*/vite.config.ts
 - [ ] T082 [P] 小程序性能优化配置 in miniprogram/
 
 ## Phase 3.11: 测试和文档完善
