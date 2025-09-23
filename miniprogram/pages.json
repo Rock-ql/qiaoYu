@@ -5,18 +5,33 @@
       "style": {
         "navigationBarTitleText": "羽毛球约球"
       }
+    }
+  ],
+  "subPackages": [
+    {
+      "root": "pages/auth",
+      "pages": [
+        {
+          "path": "login",
+          "style": { "navigationBarTitleText": "登录" }
+        }
+      ]
     },
     {
-      "path": "pages/auth/login",
-      "style": {
-        "navigationBarTitleText": "登录"
-      }
+      "root": "pages/activity",
+      "pages": [
+        { "path": "list", "style": { "navigationBarTitleText": "活动列表" } },
+        { "path": "detail", "style": { "navigationBarTitleText": "活动详情" } },
+        { "path": "create", "style": { "navigationBarTitleText": "发起约球" } }
+      ]
     },
     {
-      "path": "pages/activity/list",
-      "style": {
-        "navigationBarTitleText": "活动列表"
-      }
+      "root": "pages/expense",
+      "pages": [ { "path": "share", "style": { "navigationBarTitleText": "费用分摊" } } ]
+    },
+    {
+      "root": "pages/user",
+      "pages": [ { "path": "profile", "style": { "navigationBarTitleText": "个人中心" } } ]
     }
   ],
   "globalStyle": {
@@ -31,18 +46,14 @@
     "borderStyle": "black",
     "backgroundColor": "#ffffff",
     "list": [
-      {
-        "pagePath": "pages/index/index",
-        "iconPath": "static/tab_home.png",
-        "selectedIconPath": "static/tab_home_active.png",
-        "text": "首页"
-      },
-      {
-        "pagePath": "pages/activity/list",
-        "iconPath": "static/tab_activity.png",
-        "selectedIconPath": "static/tab_activity_active.png",
-        "text": "活动"
-      }
+      { "pagePath": "pages/index/index", "iconPath": "static/tab_home.png", "selectedIconPath": "static/tab_home_active.png", "text": "首页" },
+      { "pagePath": "pages/activity/list", "iconPath": "static/tab_activity.png", "selectedIconPath": "static/tab_activity_active.png", "text": "活动" }
     ]
+  },
+  "preloadRule": {
+    "pages/index/index": {
+      "network": "all",
+      "packages": [ "pages/activity" ]
+    }
   }
 }

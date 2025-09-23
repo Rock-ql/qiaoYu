@@ -47,4 +47,10 @@
   "h5": {
     "template": "index.html"
   }
+  "mp-weixin": {
+    "lazyCodeLoading": "requiredComponents",
+    "optimization": {
+      "domSubtreeLevel": 5
+    }
+  }
 }
