@@ -254,18 +254,12 @@ public class AuthService {
      * 创建微信用户
      */
     private User createWechatUser(WechatService.WechatUserInfo wechatUserInfo) {
-        // 生成默认密码（可以设置为随机密码）
-        String defaultPassword = "wx" + System.currentTimeMillis();
-        
-        // 生成唯一手机号（临时方案，实际应该让用户绑定手机号）
-        String tempPhone = "wx" + wechatUserInfo.getOpenId().substring(0, 8);
-        
-        // 创建用户
-        User user = new User(tempPhone, wechatUserInfo.getNickname(), passwordEncoder.encode(defaultPassword));
-        user.setAvatar(wechatUserInfo.getAvatarUrl());
-        user.setWxOpenId(wechatUserInfo.getOpenId());
-        user.setWxUnionId(wechatUserInfo.getUnionId());
-        
-        return userService.updateUser(user);
+        // 交给 UserService 以合规方式创建（生成有效手机号、编码密码、唯一性校验）
+        return userService.createWechatUser(
+                wechatUserInfo.getNickname(),
+                wechatUserInfo.getOpenId(),
+                wechatUserInfo.getUnionId(),
+                wechatUserInfo.getAvatarUrl() == null ? "" : wechatUserInfo.getAvatarUrl()
+        );
     }
 }
