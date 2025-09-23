@@ -1,5 +1,7 @@
 package cn.badminton.model;
 
+import jakarta.validation.constraints.*;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
@@ -8,58 +10,64 @@ import java.time.LocalDateTime;
  * 
  * 作者: xiaolei
  */
-public class ExpenseRecord {
+public class ExpenseRecord extends BaseEntity {
     
-    private String id;                  // 费用记录唯一标识
-    private String activityId;          // 关联的活动ID
-    private String payerId;             // 付款人用户ID
-    private String title;               // 费用标题
-    private String description;         // 费用描述
-    private Double totalAmount;         // 总金额
-    private Integer shareType;          // 分摊类型: 1-平均分摊 2-按人分摊 3-自定义分摊
-    private Integer status;             // 状态: 1-待分摊 2-已分摊 3-已完成
-    private LocalDateTime expenseTime;  // 消费时间
-    private LocalDateTime createdAt;    // 创建时间
-    private LocalDateTime updatedAt;    // 更新时间
+    /**
+     * 关联的活动ID
+     */
+    @NotBlank(message = "活动ID不能为空")
+    private String activityId;
+    
+    /**
+     * 付款人用户ID
+     */
+    @NotBlank(message = "付款人ID不能为空")
+    private String payerId;
+    
+    /**
+     * 费用类型：venue-场地费 food-餐饮费 transport-交通费 other-其他
+     */
+    @NotBlank(message = "费用类型不能为空")
+    @Pattern(regexp = "^(venue|food|transport|other)$", message = "费用类型无效")
+    private String type;
+    
+    /**
+     * 费用描述
+     */
+    @NotBlank(message = "费用描述不能为空")
+    @Size(max = 200, message = "费用描述长度不能超过200个字符")
+    private String description;
+    
+    /**
+     * 总金额
+     * 最小值0.01，最多2位小数
+     */
+    @NotNull(message = "总金额不能为空")
+    @DecimalMin(value = "0.01", message = "总金额必须大于0.01")
+    @Digits(integer = 8, fraction = 2, message = "总金额格式不正确")
+    private BigDecimal totalAmount;
+    
+    /**
+     * 分摊方式：equal-平均分摊 custom-自定义分摊
+     */
+    @NotBlank(message = "分摊方式不能为空")
+    @Pattern(regexp = "^(equal|custom)$", message = "分摊方式无效")
+    private String splitMethod = "equal";
 
-    // 分摊类型常量
-    public static final int SHARE_TYPE_AVERAGE = 1;    // 平均分摊
-    public static final int SHARE_TYPE_BY_PERSON = 2;  // 按人分摊
-    public static final int SHARE_TYPE_CUSTOM = 3;     // 自定义分摊
-
-    // 状态常量
-    public static final int STATUS_PENDING = 1;        // 待分摊
-    public static final int STATUS_SHARED = 2;         // 已分摊
-    public static final int STATUS_COMPLETED = 3;      // 已完成
-
-    // 默认构造函数
     public ExpenseRecord() {
-        this.shareType = SHARE_TYPE_AVERAGE;
-        this.status = STATUS_PENDING;
-        this.totalAmount = 0.0;
-        this.expenseTime = LocalDateTime.now();
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
+        super();
     }
 
-    // 带参构造函数
-    public ExpenseRecord(String activityId, String payerId, String title, Double totalAmount) {
-        this();
+    public ExpenseRecord(String activityId, String payerId, String type, String description, BigDecimal totalAmount) {
+        super();
         this.activityId = activityId;
         this.payerId = payerId;
-        this.title = title;
+        this.type = type;
+        this.description = description;
         this.totalAmount = totalAmount;
     }
 
-    // Getter 和 Setter 方法
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
+    // Getter和Setter方法
     public String getActivityId() {
         return activityId;
     }
@@ -76,12 +84,12 @@ public class ExpenseRecord {
         this.payerId = payerId;
     }
 
-    public String getTitle() {
-        return title;
+    public String getType() {
+        return type;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setType(String type) {
+        this.type = type;
     }
 
     public String getDescription() {
@@ -92,136 +100,92 @@ public class ExpenseRecord {
         this.description = description;
     }
 
-    public Double getTotalAmount() {
+    public BigDecimal getTotalAmount() {
         return totalAmount;
     }
 
-    public void setTotalAmount(Double totalAmount) {
+    public void setTotalAmount(BigDecimal totalAmount) {
         this.totalAmount = totalAmount;
-        this.updatedAt = LocalDateTime.now();
+        updateTimestamp();
     }
 
-    public Integer getShareType() {
-        return shareType;
+    public String getSplitMethod() {
+        return splitMethod;
     }
 
-    public void setShareType(Integer shareType) {
-        this.shareType = shareType;
-        this.updatedAt = LocalDateTime.now();
-    }
-
-    public Integer getStatus() {
-        return status;
-    }
-
-    public void setStatus(Integer status) {
-        this.status = status;
-        this.updatedAt = LocalDateTime.now();
-    }
-
-    public LocalDateTime getExpenseTime() {
-        return expenseTime;
-    }
-
-    public void setExpenseTime(LocalDateTime expenseTime) {
-        this.expenseTime = expenseTime;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    /**
-     * 标记为已分摊
-     */
-    public void markAsShared() {
-        this.status = STATUS_SHARED;
-        this.updatedAt = LocalDateTime.now();
-    }
-
-    /**
-     * 标记为已完成
-     */
-    public void markAsCompleted() {
-        this.status = STATUS_COMPLETED;
-        this.updatedAt = LocalDateTime.now();
-    }
-
-    /**
-     * 检查是否可以分摊
-     */
-    public boolean canShare() {
-        return status == STATUS_PENDING;
-    }
-
-    /**
-     * 检查是否已分摊
-     */
-    public boolean isShared() {
-        return status == STATUS_SHARED;
-    }
-
-    /**
-     * 检查是否已完成
-     */
-    public boolean isCompleted() {
-        return status == STATUS_COMPLETED;
+    public void setSplitMethod(String splitMethod) {
+        this.splitMethod = splitMethod;
+        updateTimestamp();
     }
 
     /**
      * 检查是否平均分摊
      */
-    public boolean isAverageShare() {
-        return shareType == SHARE_TYPE_AVERAGE;
-    }
-
-    /**
-     * 检查是否按人分摊
-     */
-    public boolean isByPersonShare() {
-        return shareType == SHARE_TYPE_BY_PERSON;
+    public boolean isEqualSplit() {
+        return "equal".equals(splitMethod);
     }
 
     /**
      * 检查是否自定义分摊
      */
-    public boolean isCustomShare() {
-        return shareType == SHARE_TYPE_CUSTOM;
+    public boolean isCustomSplit() {
+        return "custom".equals(splitMethod);
     }
-
+    
     /**
-     * 验证费用记录数据
+     * 检查费用类型
      */
-    public boolean isValid() {
-        return activityId != null && !activityId.isEmpty()
-            && payerId != null && !payerId.isEmpty()
-            && title != null && !title.isEmpty()
-            && totalAmount != null && totalAmount > 0;
+    public boolean isVenueFee() {
+        return "venue".equals(type);
+    }
+    
+    public boolean isFoodFee() {
+        return "food".equals(type);
+    }
+    
+    public boolean isTransportFee() {
+        return "transport".equals(type);
+    }
+    
+    public boolean isOtherFee() {
+        return "other".equals(type);
+    }
+    
+    /**
+     * 获取费用类型显示名称
+     */
+    public String getTypeDisplayName() {
+        switch (type) {
+            case "venue": return "场地费";
+            case "food": return "餐饮费";
+            case "transport": return "交通费";
+            case "other": return "其他费用";
+            default: return "未知费用";
+        }
+    }
+    
+    /**
+     * 获取分摊方式显示名称
+     */
+    public String getSplitMethodDisplayName() {
+        switch (splitMethod) {
+            case "equal": return "平均分摊";
+            case "custom": return "自定义分摊";
+            default: return "未知方式";
+        }
     }
 
     @Override
     public String toString() {
         return "ExpenseRecord{" +
-                "id='" + id + '\'' +
+                "id='" + getId() + '\'' +
                 ", activityId='" + activityId + '\'' +
                 ", payerId='" + payerId + '\'' +
-                ", title='" + title + '\'' +
+                ", type='" + type + '\'' +
+                ", description='" + description + '\'' +
                 ", totalAmount=" + totalAmount +
-                ", shareType=" + shareType +
-                ", status=" + status +
-                ", expenseTime=" + expenseTime +
+                ", splitMethod='" + splitMethod + '\'' +
+                ", createdAt=" + getCreatedAt() +
                 '}';
     }
 }

@@ -1,5 +1,7 @@
 package cn.badminton.model;
 
+import jakarta.validation.constraints.*;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
@@ -8,49 +10,58 @@ import java.time.LocalDateTime;
  * 
  * 作者: xiaolei
  */
-public class ExpenseShare {
+public class ExpenseShare extends BaseEntity {
     
-    private String id;                  // 分摊记录唯一标识
-    private String expenseId;           // 关联的费用记录ID
-    private String userId;              // 分摊用户ID
-    private Double shareAmount;         // 分摊金额
-    private Integer status;             // 分摊状态: 1-待确认 2-已确认 3-已支付
-    private String remark;              // 分摊备注
-    private LocalDateTime confirmedAt;  // 确认时间
-    private LocalDateTime paidAt;       // 支付时间
-    private LocalDateTime createdAt;    // 创建时间
-    private LocalDateTime updatedAt;    // 更新时间
+    /**
+     * 关联的费用记录ID
+     */
+    @NotBlank(message = "费用记录ID不能为空")
+    private String expenseId;
+    
+    /**
+     * 分摊用户ID
+     */
+    @NotBlank(message = "用户ID不能为空")
+    private String userId;
+    
+    /**
+     * 分摊金额
+     * 最小值0.01，最多2位小数
+     */
+    @NotNull(message = "分摊金额不能为空")
+    @DecimalMin(value = "0.01", message = "分摊金额必须大于0")
+    @Digits(integer = 8, fraction = 2, message = "分摊金额格式不正确")
+    private BigDecimal amount;
+    
+    /**
+     * 分摊状态：1-待结算 2-已结算
+     */
+    @NotNull(message = "分摊状态不能为空")
+    @Min(value = 1, message = "分摊状态值无效")
+    @Max(value = 2, message = "分摊状态值无效")
+    private Integer status = STATUS_PENDING;
+    
+    /**
+     * 结算时间
+     */
+    private LocalDateTime settledAt;
 
     // 状态常量
-    public static final int STATUS_PENDING = 1;        // 待确认
-    public static final int STATUS_CONFIRMED = 2;      // 已确认
-    public static final int STATUS_PAID = 3;           // 已支付
+    public static final int STATUS_PENDING = 1;    // 待结算
+    public static final int STATUS_SETTLED = 2;    // 已结算
 
-    // 默认构造函数
     public ExpenseShare() {
-        this.status = STATUS_PENDING;
-        this.shareAmount = 0.0;
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
+        super();
     }
 
-    // 带参构造函数
-    public ExpenseShare(String expenseId, String userId, Double shareAmount) {
-        this();
+    public ExpenseShare(String expenseId, String userId, BigDecimal amount) {
+        super();
         this.expenseId = expenseId;
         this.userId = userId;
-        this.shareAmount = shareAmount;
+        this.amount = amount;
     }
 
-    // Getter 和 Setter 方法
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
+    // Getter和Setter方法
     public String getExpenseId() {
         return expenseId;
     }
@@ -67,13 +78,13 @@ public class ExpenseShare {
         this.userId = userId;
     }
 
-    public Double getShareAmount() {
-        return shareAmount;
+    public BigDecimal getAmount() {
+        return amount;
     }
 
-    public void setShareAmount(Double shareAmount) {
-        this.shareAmount = shareAmount;
-        this.updatedAt = LocalDateTime.now();
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
+        updateTimestamp();
     }
 
     public Integer getStatus() {
@@ -82,121 +93,81 @@ public class ExpenseShare {
 
     public void setStatus(Integer status) {
         this.status = status;
-        this.updatedAt = LocalDateTime.now();
+        updateTimestamp();
     }
 
-    public String getRemark() {
-        return remark;
+    public LocalDateTime getSettledAt() {
+        return settledAt;
     }
 
-    public void setRemark(String remark) {
-        this.remark = remark;
-    }
-
-    public LocalDateTime getConfirmedAt() {
-        return confirmedAt;
-    }
-
-    public void setConfirmedAt(LocalDateTime confirmedAt) {
-        this.confirmedAt = confirmedAt;
-    }
-
-    public LocalDateTime getPaidAt() {
-        return paidAt;
-    }
-
-    public void setPaidAt(LocalDateTime paidAt) {
-        this.paidAt = paidAt;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
+    public void setSettledAt(LocalDateTime settledAt) {
+        this.settledAt = settledAt;
     }
 
     /**
-     * 确认分摊
+     * 结算分摊
      */
-    public void confirm() {
-        this.status = STATUS_CONFIRMED;
-        this.confirmedAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
+    public void settle() {
+        if (canSettle()) {
+            this.status = STATUS_SETTLED;
+            this.settledAt = LocalDateTime.now();
+            updateTimestamp();
+        }
     }
 
     /**
-     * 标记为已支付
-     */
-    public void markAsPaid() {
-        this.status = STATUS_PAID;
-        this.paidAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
-    }
-
-    /**
-     * 检查是否待确认
+     * 检查是否待结算
      */
     public boolean isPending() {
         return status == STATUS_PENDING;
     }
 
     /**
-     * 检查是否已确认
+     * 检查是否已结算
      */
-    public boolean isConfirmed() {
-        return status == STATUS_CONFIRMED;
+    public boolean isSettled() {
+        return status == STATUS_SETTLED;
     }
 
     /**
-     * 检查是否已支付
+     * 检查是否可以结算
      */
-    public boolean isPaid() {
-        return status == STATUS_PAID;
-    }
-
-    /**
-     * 检查是否可以确认
-     */
-    public boolean canConfirm() {
+    public boolean canSettle() {
         return status == STATUS_PENDING;
     }
-
+    
     /**
-     * 检查是否可以支付
+     * 重新设为待结算状态
      */
-    public boolean canPay() {
-        return status == STATUS_CONFIRMED;
+    public void resetToPending() {
+        if (isSettled()) {
+            this.status = STATUS_PENDING;
+            this.settledAt = null;
+            updateTimestamp();
+        }
     }
-
+    
     /**
-     * 验证分摊记录数据
+     * 获取状态显示名称
      */
-    public boolean isValid() {
-        return expenseId != null && !expenseId.isEmpty()
-            && userId != null && !userId.isEmpty()
-            && shareAmount != null && shareAmount > 0;
+    public String getStatusDisplayName() {
+        switch (status) {
+            case STATUS_PENDING: return "待结算";
+            case STATUS_SETTLED: return "已结算";
+            default: return "未知状态";
+        }
     }
 
     @Override
     public String toString() {
         return "ExpenseShare{" +
-                "id='" + id + '\'' +
+                "id='" + getId() + '\'' +
                 ", expenseId='" + expenseId + '\'' +
                 ", userId='" + userId + '\'' +
-                ", shareAmount=" + shareAmount +
+                ", amount=" + amount +
                 ", status=" + status +
-                ", confirmedAt=" + confirmedAt +
-                ", paidAt=" + paidAt +
+                ", settledAt=" + settledAt +
+                ", createdAt=" + getCreatedAt() +
                 '}';
     }
 }

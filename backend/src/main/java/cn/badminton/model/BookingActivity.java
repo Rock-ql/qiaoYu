@@ -1,5 +1,7 @@
 package cn.badminton.model;
 
+import jakarta.validation.constraints.*;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
@@ -8,22 +10,86 @@ import java.time.LocalDateTime;
  * 
  * 作者: xiaolei
  */
-public class BookingActivity {
+public class BookingActivity extends BaseEntity {
     
-    private String id;                  // 活动唯一标识
-    private String title;               // 活动标题
-    private String organizer;           // 发起人用户ID
-    private String venue;               // 场地名称
-    private String address;             // 详细地址
-    private LocalDateTime startTime;    // 开始时间
-    private LocalDateTime endTime;      // 结束时间
-    private Integer maxPlayers;         // 最大人数
-    private Integer currentPlayers;     // 当前人数
-    private Double fee;                 // 预估费用
-    private String description;         // 活动描述
-    private Integer status;             // 状态: 1-待确认 2-进行中 3-已完成 4-已取消
-    private LocalDateTime createdAt;    // 创建时间
-    private LocalDateTime updatedAt;    // 更新时间
+    /**
+     * 活动标题
+     * 长度限制5-50个字符
+     */
+    @NotBlank(message = "活动标题不能为空")
+    @Size(min = 5, max = 50, message = "活动标题长度必须在5-50个字符之间")
+    private String title;
+    
+    /**
+     * 发起人用户ID
+     */
+    @NotBlank(message = "发起人不能为空")
+    private String organizer;
+    
+    /**
+     * 场地名称
+     */
+    @NotBlank(message = "场地名称不能为空")
+    @Size(max = 100, message = "场地名称长度不能超过100个字符")
+    private String venue;
+    
+    /**
+     * 详细地址
+     */
+    @Size(max = 200, message = "详细地址长度不能超过200个字符")
+    private String address = "";
+    
+    /**
+     * 开始时间
+     * 必须晚于当前时间
+     */
+    @NotNull(message = "开始时间不能为空")
+    @Future(message = "开始时间必须晚于当前时间")
+    private LocalDateTime startTime;
+    
+    /**
+     * 结束时间
+     * 必须晚于开始时间
+     */
+    @NotNull(message = "结束时间不能为空")
+    private LocalDateTime endTime;
+    
+    /**
+     * 最大人数
+     * 限制2-20人
+     */
+    @NotNull(message = "最大人数不能为空")
+    @Min(value = 2, message = "最大人数不能少于2人")
+    @Max(value = 20, message = "最大人数不能超过20人")
+    private Integer maxPlayers;
+    
+    /**
+     * 当前人数
+     */
+    @Min(value = 0, message = "当前人数不能为负数")
+    private Integer currentPlayers = 1;
+    
+    /**
+     * 预估费用
+     * 非负数，最多2位小数
+     */
+    @DecimalMin(value = "0.00", message = "预估费用不能为负数")
+    @Digits(integer = 8, fraction = 2, message = "预估费用格式不正确")
+    private BigDecimal fee = BigDecimal.ZERO;
+    
+    /**
+     * 活动描述
+     */
+    @Size(max = 500, message = "活动描述长度不能超过500个字符")
+    private String description = "";
+    
+    /**
+     * 活动状态：1-待确认 2-进行中 3-已完成 4-已取消
+     */
+    @NotNull(message = "活动状态不能为空")
+    @Min(value = 1, message = "活动状态值无效")
+    @Max(value = 4, message = "活动状态值无效")
+    private Integer status = STATUS_PENDING;
 
     // 状态常量
     public static final int STATUS_PENDING = 1;     // 待确认
@@ -31,19 +97,13 @@ public class BookingActivity {
     public static final int STATUS_COMPLETED = 3;   // 已完成
     public static final int STATUS_CANCELLED = 4;   // 已取消
 
-    // 默认构造函数
     public BookingActivity() {
-        this.status = STATUS_PENDING;
-        this.currentPlayers = 1; // 发起人默认参加
-        this.fee = 0.0;
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
+        super();
     }
 
-    // 带参构造函数
     public BookingActivity(String title, String organizer, String venue, 
                           LocalDateTime startTime, LocalDateTime endTime, Integer maxPlayers) {
-        this();
+        super();
         this.title = title;
         this.organizer = organizer;
         this.venue = venue;
@@ -52,14 +112,7 @@ public class BookingActivity {
         this.maxPlayers = maxPlayers;
     }
 
-    // Getter 和 Setter 方法
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
+    // Getter和Setter方法
 
     public String getTitle() {
         return title;
@@ -125,11 +178,11 @@ public class BookingActivity {
         this.currentPlayers = currentPlayers;
     }
 
-    public Double getFee() {
+    public BigDecimal getFee() {
         return fee;
     }
 
-    public void setFee(Double fee) {
+    public void setFee(BigDecimal fee) {
         this.fee = fee;
     }
 
@@ -147,23 +200,7 @@ public class BookingActivity {
 
     public void setStatus(Integer status) {
         this.status = status;
-        this.updatedAt = LocalDateTime.now();
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
+        updateTimestamp();
     }
 
     /**
@@ -172,7 +209,7 @@ public class BookingActivity {
     public boolean addPlayer() {
         if (currentPlayers < maxPlayers) {
             this.currentPlayers++;
-            this.updatedAt = LocalDateTime.now();
+            updateTimestamp();
             return true;
         }
         return false;
@@ -184,7 +221,7 @@ public class BookingActivity {
     public boolean removePlayer() {
         if (currentPlayers > 0) {
             this.currentPlayers--;
-            this.updatedAt = LocalDateTime.now();
+            updateTimestamp();
             return true;
         }
         return false;
@@ -212,21 +249,73 @@ public class BookingActivity {
     }
 
     /**
-     * 验证活动数据
+     * 验证结束时间是否晚于开始时间
      */
-    public boolean isValid() {
-        return title != null && !title.isEmpty()
-            && organizer != null && !organizer.isEmpty()
-            && venue != null && !venue.isEmpty()
-            && startTime != null && endTime != null
-            && maxPlayers != null && maxPlayers > 0
-            && startTime.isBefore(endTime);
+    @AssertTrue(message = "结束时间必须晚于开始时间")
+    public boolean isEndTimeAfterStartTime() {
+        if (startTime == null || endTime == null) {
+            return true; // 让@NotNull验证处理
+        }
+        return endTime.isAfter(startTime);
+    }
+    
+    /**
+     * 开始活动
+     */
+    public void startActivity() {
+        if (this.status == STATUS_PENDING) {
+            this.status = STATUS_ONGOING;
+            updateTimestamp();
+        }
+    }
+    
+    /**
+     * 完成活动
+     */
+    public void completeActivity() {
+        if (this.status == STATUS_ONGOING) {
+            this.status = STATUS_COMPLETED;
+            updateTimestamp();
+        }
+    }
+    
+    /**
+     * 取消活动
+     */
+    public void cancelActivity() {
+        if (canCancel()) {
+            this.status = STATUS_CANCELLED;
+            updateTimestamp();
+        }
+    }
+    
+    /**
+     * 检查活动是否已过期
+     */
+    public boolean isExpired() {
+        return endTime != null && endTime.isBefore(LocalDateTime.now());
+    }
+    
+    /**
+     * 检查活动是否即将开始（1小时内）
+     */
+    public boolean isStartingSoon() {
+        if (startTime == null) return false;
+        LocalDateTime oneHourLater = LocalDateTime.now().plusHours(1);
+        return startTime.isBefore(oneHourLater) && startTime.isAfter(LocalDateTime.now());
+    }
+    
+    /**
+     * 获取剩余参与名额
+     */
+    public int getAvailableSlots() {
+        return maxPlayers - currentPlayers;
     }
 
     @Override
     public String toString() {
         return "BookingActivity{" +
-                "id='" + id + '\'' +
+                "id='" + getId() + '\'' +
                 ", title='" + title + '\'' +
                 ", organizer='" + organizer + '\'' +
                 ", venue='" + venue + '\'' +
@@ -235,6 +324,7 @@ public class BookingActivity {
                 ", currentPlayers=" + currentPlayers +
                 ", maxPlayers=" + maxPlayers +
                 ", status=" + status +
+                ", createdAt=" + getCreatedAt() +
                 '}';
     }
 }

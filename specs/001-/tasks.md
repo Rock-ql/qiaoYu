@@ -47,11 +47,11 @@ qiaoYu/
 ## Phase 3.3: 核心数据模型实现 (仅在测试失败后)
 
 ### 数据模型 (基于data-model.md)
-- [ ] T023 [P] 用户实体模型 in backend/src/main/java/cn/badminton/model/User.java
-- [ ] T024 [P] 约球活动实体模型 in backend/src/main/java/cn/badminton/model/BookingActivity.java
-- [ ] T025 [P] 参与记录实体模型 in backend/src/main/java/cn/badminton/model/Participation.java
-- [ ] T026 [P] 费用记录实体模型 in backend/src/main/java/cn/badminton/model/ExpenseRecord.java
-- [ ] T027 [P] 费用分摊实体模型 in backend/src/main/java/cn/badminton/model/ExpenseShare.java
+- [x] T023 [P] 用户实体模型 in backend/src/main/java/cn/badminton/model/User.java
+- [x] T024 [P] 约球活动实体模型 in backend/src/main/java/cn/badminton/model/BookingActivity.java
+- [x] T025 [P] 参与记录实体模型 in backend/src/main/java/cn/badminton/model/Participation.java
+- [x] T026 [P] 费用记录实体模型 in backend/src/main/java/cn/badminton/model/ExpenseRecord.java
+- [x] T027 [P] 费用分摊实体模型 in backend/src/main/java/cn/badminton/model/ExpenseShare.java
 
 ### Redis存储层
 - [ ] T028 [P] 用户Redis存储库 in backend/src/main/java/cn/badminton/repository/UserRepository.java
