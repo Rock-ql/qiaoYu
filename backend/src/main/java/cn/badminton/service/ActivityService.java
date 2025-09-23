@@ -3,8 +3,7 @@ package cn.badminton.service;
 import cn.badminton.model.BookingActivity;
 import cn.badminton.model.Participation;
 import cn.badminton.repository.ActivityRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,9 +18,8 @@ import java.util.stream.Collectors;
  * 作者: xiaolei
  */
 @Service
+@Slf4j
 public class ActivityService {
-    
-    private static final Logger logger = LoggerFactory.getLogger(ActivityService.class);
     
     @Autowired
     private ActivityRepository activityRepository;
@@ -35,7 +33,7 @@ public class ActivityService {
     public BookingActivity createActivity(String organizerId, String title, String venue, 
                                         LocalDateTime startTime, LocalDateTime endTime, 
                                         Integer maxPlayers, String description, String address) {
-        logger.info("创建约球活动，发起人: {}, 标题: {}", organizerId, title);
+        log.info("创建约球活动，发起人: {}, 标题: {}", organizerId, title);
         
         try {
             // 参数验证
@@ -87,11 +85,11 @@ public class ActivityService {
             // 增加发起人的活动参与次数
             userService.incrementUserActivities(organizerId);
             
-            logger.info("创建约球活动成功，活动ID: {}", activity.getId());
+            log.info("创建约球活动成功，活动ID: {}", activity.getId());
             return activity;
             
         } catch (Exception e) {
-            logger.error("创建约球活动失败，发起人: {}, 错误信息: {}", organizerId, e.getMessage(), e);
+            log.error("创建约球活动失败，发起人: {}, 错误信息: {}", organizerId, e.getMessage(), e);
             throw e;
         }
     }
@@ -100,7 +98,7 @@ public class ActivityService {
      * 参加活动
      */
     public boolean joinActivity(String activityId, String userId, String remark) {
-        logger.info("用户参加活动，活动ID: {}, 用户ID: {}", activityId, userId);
+        log.info("用户参加活动，活动ID: {}, 用户ID: {}", activityId, userId);
         
         try {
             // 获取活动
@@ -135,11 +133,11 @@ public class ActivityService {
             // 增加用户的活动参与次数
             userService.incrementUserActivities(userId);
             
-            logger.info("用户参加活动成功，活动ID: {}, 用户ID: {}", activityId, userId);
+            log.info("用户参加活动成功，活动ID: {}, 用户ID: {}", activityId, userId);
             return true;
             
         } catch (Exception e) {
-            logger.error("用户参加活动失败，活动ID: {}, 用户ID: {}, 错误信息: {}", activityId, userId, e.getMessage(), e);
+            log.error("用户参加活动失败，活动ID: {}, 用户ID: {}, 错误信息: {}", activityId, userId, e.getMessage(), e);
             throw e;
         }
     }
@@ -148,7 +146,7 @@ public class ActivityService {
      * 退出活动
      */
     public boolean leaveActivity(String activityId, String userId) {
-        logger.info("用户退出活动，活动ID: {}, 用户ID: {}", activityId, userId);
+        log.info("用户退出活动，活动ID: {}, 用户ID: {}", activityId, userId);
         
         try {
             // 获取活动
@@ -171,14 +169,14 @@ public class ActivityService {
             // 减少参与人数
             if (activity.removePlayer()) {
                 activityRepository.save(activity);
-                logger.info("用户退出活动成功，活动ID: {}, 用户ID: {}", activityId, userId);
+                log.info("用户退出活动成功，活动ID: {}, 用户ID: {}", activityId, userId);
                 return true;
             } else {
                 throw new IllegalArgumentException("退出活动失败");
             }
             
         } catch (Exception e) {
-            logger.error("用户退出活动失败，活动ID: {}, 用户ID: {}, 错误信息: {}", activityId, userId, e.getMessage(), e);
+            log.error("用户退出活动失败，活动ID: {}, 用户ID: {}, 错误信息: {}", activityId, userId, e.getMessage(), e);
             throw e;
         }
     }
@@ -187,7 +185,7 @@ public class ActivityService {
      * 取消活动
      */
     public void cancelActivity(String activityId, String userId) {
-        logger.info("取消活动，活动ID: {}, 用户ID: {}", activityId, userId);
+        log.info("取消活动，活动ID: {}, 用户ID: {}", activityId, userId);
         
         try {
             // 获取活动
@@ -210,10 +208,10 @@ public class ActivityService {
             activity.setStatus(BookingActivity.STATUS_CANCELLED);
             activityRepository.save(activity);
             
-            logger.info("取消活动成功，活动ID: {}", activityId);
+            log.info("取消活动成功，活动ID: {}", activityId);
             
         } catch (Exception e) {
-            logger.error("取消活动失败，活动ID: {}, 用户ID: {}, 错误信息: {}", activityId, userId, e.getMessage(), e);
+            log.error("取消活动失败，活动ID: {}, 用户ID: {}, 错误信息: {}", activityId, userId, e.getMessage(), e);
             throw e;
         }
     }
@@ -222,7 +220,7 @@ public class ActivityService {
      * 开始活动
      */
     public void startActivity(String activityId, String userId) {
-        logger.info("开始活动，活动ID: {}, 用户ID: {}", activityId, userId);
+        log.info("开始活动，活动ID: {}, 用户ID: {}", activityId, userId);
         
         try {
             // 获取活动
@@ -245,10 +243,10 @@ public class ActivityService {
             activity.setStatus(BookingActivity.STATUS_ONGOING);
             activityRepository.save(activity);
             
-            logger.info("开始活动成功，活动ID: {}", activityId);
+            log.info("开始活动成功，活动ID: {}", activityId);
             
         } catch (Exception e) {
-            logger.error("开始活动失败，活动ID: {}, 用户ID: {}, 错误信息: {}", activityId, userId, e.getMessage(), e);
+            log.error("开始活动失败，活动ID: {}, 用户ID: {}, 错误信息: {}", activityId, userId, e.getMessage(), e);
             throw e;
         }
     }
@@ -257,7 +255,7 @@ public class ActivityService {
      * 完成活动
      */
     public void completeActivity(String activityId, String userId) {
-        logger.info("完成活动，活动ID: {}, 用户ID: {}", activityId, userId);
+        log.info("完成活动，活动ID: {}, 用户ID: {}", activityId, userId);
         
         try {
             // 获取活动
@@ -280,10 +278,10 @@ public class ActivityService {
             activity.setStatus(BookingActivity.STATUS_COMPLETED);
             activityRepository.save(activity);
             
-            logger.info("完成活动成功，活动ID: {}", activityId);
+            log.info("完成活动成功，活动ID: {}", activityId);
             
         } catch (Exception e) {
-            logger.error("完成活动失败，活动ID: {}, 用户ID: {}, 错误信息: {}", activityId, userId, e.getMessage(), e);
+            log.error("完成活动失败，活动ID: {}, 用户ID: {}, 错误信息: {}", activityId, userId, e.getMessage(), e);
             throw e;
         }
     }
@@ -292,15 +290,15 @@ public class ActivityService {
      * 根据ID获取活动
      */
     public BookingActivity getActivityById(String activityId) {
-        logger.debug("根据ID获取活动: {}", activityId);
+        log.debug("根据ID获取活动: {}", activityId);
         
         try {
             BookingActivity activity = activityRepository.findById(activityId);
-            logger.debug("获取活动结果: {}", activity != null ? "找到" : "未找到");
+            log.debug("获取活动结果: {}", activity != null ? "找到" : "未找到");
             return activity;
             
         } catch (Exception e) {
-            logger.error("根据ID获取活动失败，活动ID: {}, 错误信息: {}", activityId, e.getMessage(), e);
+            log.error("根据ID获取活动失败，活动ID: {}, 错误信息: {}", activityId, e.getMessage(), e);
             return null;
         }
     }
@@ -309,15 +307,15 @@ public class ActivityService {
      * 获取所有活动
      */
     public List<BookingActivity> getAllActivities() {
-        logger.debug("获取所有活动");
+        log.debug("获取所有活动");
         
         try {
             List<BookingActivity> activities = activityRepository.findAll();
-            logger.debug("获取所有活动成功，活动数量: {}", activities.size());
+            log.debug("获取所有活动成功，活动数量: {}", activities.size());
             return activities;
             
         } catch (Exception e) {
-            logger.error("获取所有活动失败，错误信息: {}", e.getMessage(), e);
+            log.error("获取所有活动失败，错误信息: {}", e.getMessage(), e);
             throw e;
         }
     }
@@ -326,15 +324,15 @@ public class ActivityService {
      * 根据状态获取活动
      */
     public List<BookingActivity> getActivitiesByStatus(Integer status) {
-        logger.debug("根据状态获取活动，状态: {}", status);
+        log.debug("根据状态获取活动，状态: {}", status);
         
         try {
             List<BookingActivity> activities = activityRepository.findByStatus(status);
-            logger.debug("根据状态获取活动成功，活动数量: {}", activities.size());
+            log.debug("根据状态获取活动成功，活动数量: {}", activities.size());
             return activities;
             
         } catch (Exception e) {
-            logger.error("根据状态获取活动失败，状态: {}, 错误信息: {}", status, e.getMessage(), e);
+            log.error("根据状态获取活动失败，状态: {}, 错误信息: {}", status, e.getMessage(), e);
             throw e;
         }
     }
@@ -343,15 +341,15 @@ public class ActivityService {
      * 获取用户发起的活动
      */
     public List<BookingActivity> getUserActivities(String userId) {
-        logger.debug("获取用户发起的活动，用户ID: {}", userId);
+        log.debug("获取用户发起的活动，用户ID: {}", userId);
         
         try {
             List<BookingActivity> activities = activityRepository.findByOrganizer(userId);
-            logger.debug("获取用户发起的活动成功，活动数量: {}", activities.size());
+            log.debug("获取用户发起的活动成功，活动数量: {}", activities.size());
             return activities;
             
         } catch (Exception e) {
-            logger.error("获取用户发起的活动失败，用户ID: {}, 错误信息: {}", userId, e.getMessage(), e);
+            log.error("获取用户发起的活动失败，用户ID: {}, 错误信息: {}", userId, e.getMessage(), e);
             throw e;
         }
     }
@@ -360,7 +358,7 @@ public class ActivityService {
      * 获取可参加的活动（待确认且未满员）
      */
     public List<BookingActivity> getAvailableActivities() {
-        logger.debug("获取可参加的活动");
+        log.debug("获取可参加的活动");
         
         try {
             List<BookingActivity> allActivities = activityRepository.findByStatus(BookingActivity.STATUS_PENDING);
@@ -368,11 +366,11 @@ public class ActivityService {
                     .filter(activity -> activity.canJoin())
                     .collect(Collectors.toList());
             
-            logger.debug("获取可参加的活动成功，活动数量: {}", availableActivities.size());
+            log.debug("获取可参加的活动成功，活动数量: {}", availableActivities.size());
             return availableActivities;
             
         } catch (Exception e) {
-            logger.error("获取可参加的活动失败，错误信息: {}", e.getMessage(), e);
+            log.error("获取可参加的活动失败，错误信息: {}", e.getMessage(), e);
             throw e;
         }
     }
@@ -381,15 +379,15 @@ public class ActivityService {
      * 根据时间范围获取活动
      */
     public List<BookingActivity> getActivitiesByTimeRange(LocalDateTime startTime, LocalDateTime endTime) {
-        logger.debug("根据时间范围获取活动，开始时间: {}, 结束时间: {}", startTime, endTime);
+        log.debug("根据时间范围获取活动，开始时间: {}, 结束时间: {}", startTime, endTime);
         
         try {
             List<BookingActivity> activities = activityRepository.findByTimeRange(startTime, endTime);
-            logger.debug("根据时间范围获取活动成功，活动数量: {}", activities.size());
+            log.debug("根据时间范围获取活动成功，活动数量: {}", activities.size());
             return activities;
             
         } catch (Exception e) {
-            logger.error("根据时间范围获取活动失败，错误信息: {}", e.getMessage(), e);
+            log.error("根据时间范围获取活动失败，错误信息: {}", e.getMessage(), e);
             throw e;
         }
     }
@@ -398,7 +396,7 @@ public class ActivityService {
      * 更新活动信息
      */
     public BookingActivity updateActivity(BookingActivity activity) {
-        logger.info("更新活动信息，活动ID: {}", activity.getId());
+        log.info("更新活动信息，活动ID: {}", activity.getId());
         
         try {
             // 验证活动是否存在
@@ -418,11 +416,11 @@ public class ActivityService {
             }
             
             BookingActivity updatedActivity = activityRepository.save(activity);
-            logger.info("活动信息更新成功，活动ID: {}", activity.getId());
+            log.info("活动信息更新成功，活动ID: {}", activity.getId());
             return updatedActivity;
             
         } catch (Exception e) {
-            logger.error("更新活动信息失败，活动ID: {}, 错误信息: {}", activity.getId(), e.getMessage(), e);
+            log.error("更新活动信息失败，活动ID: {}, 错误信息: {}", activity.getId(), e.getMessage(), e);
             throw e;
         }
     }

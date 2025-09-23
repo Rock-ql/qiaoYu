@@ -2,8 +2,7 @@ package cn.badminton.service;
 
 import cn.badminton.model.User;
 import cn.badminton.repository.UserRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -20,9 +19,8 @@ import java.security.SecureRandom;
  * 作者: xiaolei
  */
 @Service
+@Slf4j
 public class UserService {
-    
-    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
     
     // 手机号正则表达式
     private static final Pattern PHONE_PATTERN = Pattern.compile("^1[3-9]\\d{9}$");
@@ -37,7 +35,7 @@ public class UserService {
      * 用户注册
      */
     public User register(String phone, String nickname, String password) {
-        logger.info("开始用户注册，手机号: {}, 昵称: {}", phone, nickname);
+        log.info("开始用户注册，手机号: {}, 昵称: {}", phone, nickname);
         
         try {
             // 参数验证
@@ -62,11 +60,11 @@ public class UserService {
             User user = new User(phone, nickname.trim(), passwordEncoder.encode(password));
             user = userRepository.save(user);
             
-            logger.info("用户注册成功，用户ID: {}", user.getId());
+            log.info("用户注册成功，用户ID: {}", user.getId());
             return user;
             
         } catch (Exception e) {
-            logger.error("用户注册失败，手机号: {}, 错误信息: {}", phone, e.getMessage(), e);
+            log.error("用户注册失败，手机号: {}, 错误信息: {}", phone, e.getMessage(), e);
             throw e;
         }
     }
@@ -79,7 +77,7 @@ public class UserService {
      * - 设置微信OpenID/UnionID与头像；
      */
     public User createWechatUser(String nickname, String wxOpenId, String wxUnionId, String avatarUrl) {
-        logger.info("创建微信新用户，昵称: {}", nickname);
+        log.info("创建微信新用户，昵称: {}", nickname);
 
         try {
             if (wxOpenId == null || wxOpenId.trim().isEmpty()) {
@@ -105,7 +103,7 @@ public class UserService {
 
             return userRepository.save(user);
         } catch (Exception e) {
-            logger.error("创建微信用户失败，昵称: {}, 错误信息: {}", nickname, e.getMessage(), e);
+            log.error("创建微信用户失败，昵称: {}, 错误信息: {}", nickname, e.getMessage(), e);
             throw e;
         }
     }
@@ -129,7 +127,7 @@ public class UserService {
      * 根据手机号查找用户
      */
     public User findByPhone(String phone) {
-        logger.debug("根据手机号查找用户: {}", phone);
+        log.debug("根据手机号查找用户: {}", phone);
         
         if (!isValidPhone(phone)) {
             return null;
@@ -137,11 +135,11 @@ public class UserService {
         
         try {
             User user = userRepository.findByPhone(phone);
-            logger.debug("查找用户结果: {}", user != null ? "找到" : "未找到");
+            log.debug("查找用户结果: {}", user != null ? "找到" : "未找到");
             return user;
             
         } catch (Exception e) {
-            logger.error("根据手机号查找用户异常，手机号: {}, 错误信息: {}", phone, e.getMessage(), e);
+            log.error("根据手机号查找用户异常，手机号: {}, 错误信息: {}", phone, e.getMessage(), e);
             return null;
         }
     }
@@ -150,7 +148,7 @@ public class UserService {
      * 根据ID查找用户
      */
     public User findById(String userId) {
-        logger.debug("根据ID查找用户: {}", userId);
+        log.debug("根据ID查找用户: {}", userId);
         
         if (userId == null || userId.trim().isEmpty()) {
             return null;
@@ -158,11 +156,11 @@ public class UserService {
         
         try {
             User user = userRepository.findById(userId);
-            logger.debug("查找用户结果: {}", user != null ? "找到" : "未找到");
+            log.debug("查找用户结果: {}", user != null ? "找到" : "未找到");
             return user;
             
         } catch (Exception e) {
-            logger.error("根据ID查找用户异常，用户ID: {}, 错误信息: {}", userId, e.getMessage(), e);
+            log.error("根据ID查找用户异常，用户ID: {}, 错误信息: {}", userId, e.getMessage(), e);
             return null;
         }
     }
@@ -171,7 +169,7 @@ public class UserService {
      * 根据微信OpenID查找用户
      */
     public User findByWxOpenId(String wxOpenId) {
-        logger.debug("根据微信OpenID查找用户: {}", wxOpenId);
+        log.debug("根据微信OpenID查找用户: {}", wxOpenId);
         
         if (wxOpenId == null || wxOpenId.trim().isEmpty()) {
             return null;
@@ -179,11 +177,11 @@ public class UserService {
         
         try {
             User user = userRepository.findByWechatOpenId(wxOpenId);
-            logger.debug("查找用户结果: {}", user != null ? "找到" : "未找到");
+            log.debug("查找用户结果: {}", user != null ? "找到" : "未找到");
             return user;
             
         } catch (Exception e) {
-            logger.error("根据微信OpenID查找用户异常，wxOpenId: {}, 错误信息: {}", wxOpenId, e.getMessage(), e);
+            log.error("根据微信OpenID查找用户异常，wxOpenId: {}, 错误信息: {}", wxOpenId, e.getMessage(), e);
             return null;
         }
     }
@@ -192,7 +190,7 @@ public class UserService {
      * 更新用户信息
      */
     public User updateUser(User user) {
-        logger.info("更新用户信息，用户ID: {}", user.getId());
+        log.info("更新用户信息，用户ID: {}", user.getId());
         
         try {
             // 验证用户是否存在
@@ -214,11 +212,11 @@ public class UserService {
             }
             
             User updatedUser = userRepository.save(user);
-            logger.info("用户信息更新成功，用户ID: {}", user.getId());
+            log.info("用户信息更新成功，用户ID: {}", user.getId());
             return updatedUser;
             
         } catch (Exception e) {
-            logger.error("更新用户信息失败，用户ID: {}, 错误信息: {}", user.getId(), e.getMessage(), e);
+            log.error("更新用户信息失败，用户ID: {}, 错误信息: {}", user.getId(), e.getMessage(), e);
             throw e;
         }
     }
@@ -227,7 +225,7 @@ public class UserService {
      * 更新用户头像
      */
     public void updateAvatar(String userId, String avatarUrl) {
-        logger.info("更新用户头像，用户ID: {}", userId);
+        log.info("更新用户头像，用户ID: {}", userId);
         
         try {
             User user = userRepository.findById(userId);
@@ -238,10 +236,10 @@ public class UserService {
             user.setAvatar(avatarUrl);
             userRepository.save(user);
             
-            logger.info("用户头像更新成功，用户ID: {}", userId);
+            log.info("用户头像更新成功，用户ID: {}", userId);
             
         } catch (Exception e) {
-            logger.error("更新用户头像失败，用户ID: {}, 错误信息: {}", userId, e.getMessage(), e);
+            log.error("更新用户头像失败，用户ID: {}, 错误信息: {}", userId, e.getMessage(), e);
             throw e;
         }
     }
@@ -250,7 +248,7 @@ public class UserService {
      * 更新用户昵称
      */
     public void updateNickname(String userId, String nickname) {
-        logger.info("更新用户昵称，用户ID: {}", userId);
+        log.info("更新用户昵称，用户ID: {}", userId);
         
         try {
             if (nickname == null || nickname.trim().isEmpty()) {
@@ -265,10 +263,10 @@ public class UserService {
             user.setNickname(nickname.trim());
             userRepository.save(user);
             
-            logger.info("用户昵称更新成功，用户ID: {}", userId);
+            log.info("用户昵称更新成功，用户ID: {}", userId);
             
         } catch (Exception e) {
-            logger.error("更新用户昵称失败，用户ID: {}, 错误信息: {}", userId, e.getMessage(), e);
+            log.error("更新用户昵称失败，用户ID: {}, 错误信息: {}", userId, e.getMessage(), e);
             throw e;
         }
     }
@@ -277,7 +275,7 @@ public class UserService {
      * 绑定微信
      */
     public void bindWechat(String userId, String wxOpenId, String wxUnionId) {
-        logger.info("绑定微信，用户ID: {}", userId);
+        log.info("绑定微信，用户ID: {}", userId);
         
         try {
             User user = userRepository.findById(userId);
@@ -295,10 +293,10 @@ public class UserService {
             user.setWxUnionId(wxUnionId);
             userRepository.save(user);
             
-            logger.info("微信绑定成功，用户ID: {}", userId);
+            log.info("微信绑定成功，用户ID: {}", userId);
             
         } catch (Exception e) {
-            logger.error("绑定微信失败，用户ID: {}, 错误信息: {}", userId, e.getMessage(), e);
+            log.error("绑定微信失败，用户ID: {}, 错误信息: {}", userId, e.getMessage(), e);
             throw e;
         }
     }
@@ -307,18 +305,18 @@ public class UserService {
      * 增加用户活动参与次数
      */
     public void incrementUserActivities(String userId) {
-        logger.debug("增加用户活动参与次数，用户ID: {}", userId);
+        log.debug("增加用户活动参与次数，用户ID: {}", userId);
         
         try {
             User user = userRepository.findById(userId);
             if (user != null) {
                 user.incrementActivities();
                 userRepository.save(user);
-                logger.debug("用户活动参与次数增加成功，用户ID: {}", userId);
+                log.debug("用户活动参与次数增加成功，用户ID: {}", userId);
             }
             
         } catch (Exception e) {
-            logger.error("增加用户活动参与次数失败，用户ID: {}, 错误信息: {}", userId, e.getMessage(), e);
+            log.error("增加用户活动参与次数失败，用户ID: {}, 错误信息: {}", userId, e.getMessage(), e);
         }
     }
 
@@ -326,18 +324,18 @@ public class UserService {
      * 增加用户消费金额
      */
     public void addUserExpense(String userId, BigDecimal amount) {
-        logger.debug("增加用户消费金额，用户ID: {}, 金额: {}", userId, amount);
+        log.debug("增加用户消费金额，用户ID: {}, 金额: {}", userId, amount);
         
         try {
             User user = userRepository.findById(userId);
             if (user != null) {
                 user.addExpense(amount);
                 userRepository.save(user);
-                logger.debug("用户消费金额增加成功，用户ID: {}", userId);
+                log.debug("用户消费金额增加成功，用户ID: {}", userId);
             }
             
         } catch (Exception e) {
-            logger.error("增加用户消费金额失败，用户ID: {}, 错误信息: {}", userId, e.getMessage(), e);
+            log.error("增加用户消费金额失败，用户ID: {}, 错误信息: {}", userId, e.getMessage(), e);
         }
     }
 
@@ -345,14 +343,14 @@ public class UserService {
      * 禁用用户
      */
     public void disableUser(String userId) {
-        logger.info("禁用用户，用户ID: {}", userId);
+        log.info("禁用用户，用户ID: {}", userId);
         
         try {
             userRepository.updateStatus(userId, 2); // 2表示禁用
-            logger.info("用户禁用成功，用户ID: {}", userId);
+            log.info("用户禁用成功，用户ID: {}", userId);
             
         } catch (Exception e) {
-            logger.error("禁用用户失败，用户ID: {}, 错误信息: {}", userId, e.getMessage(), e);
+            log.error("禁用用户失败，用户ID: {}, 错误信息: {}", userId, e.getMessage(), e);
             throw e;
         }
     }
@@ -361,14 +359,14 @@ public class UserService {
      * 启用用户
      */
     public void enableUser(String userId) {
-        logger.info("启用用户，用户ID: {}", userId);
+        log.info("启用用户，用户ID: {}", userId);
         
         try {
             userRepository.updateStatus(userId, 1); // 1表示正常
-            logger.info("用户启用成功，用户ID: {}", userId);
+            log.info("用户启用成功，用户ID: {}", userId);
             
         } catch (Exception e) {
-            logger.error("启用用户失败，用户ID: {}, 错误信息: {}", userId, e.getMessage(), e);
+            log.error("启用用户失败，用户ID: {}, 错误信息: {}", userId, e.getMessage(), e);
             throw e;
         }
     }
@@ -377,15 +375,15 @@ public class UserService {
      * 获取所有用户
      */
     public List<User> getAllUsers() {
-        logger.debug("获取所有用户");
+        log.debug("获取所有用户");
         
         try {
             List<User> users = userRepository.findAll();
-            logger.debug("获取所有用户成功，用户数量: {}", users.size());
+            log.debug("获取所有用户成功，用户数量: {}", users.size());
             return users;
             
         } catch (Exception e) {
-            logger.error("获取所有用户失败，错误信息: {}", e.getMessage(), e);
+            log.error("获取所有用户失败，错误信息: {}", e.getMessage(), e);
             throw e;
         }
     }

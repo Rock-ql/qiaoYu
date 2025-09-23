@@ -13,8 +13,7 @@ import cn.badminton.model.ExpenseRecord;
 import cn.badminton.model.ExpenseShare;
 import cn.badminton.service.ExpenseService;
 import jakarta.validation.Valid;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,10 +27,9 @@ import java.util.List;
  * 作者: xiaolei
  */
 @RestController
+@Slf4j
 @RequestMapping("/api/expense")
 public class ExpenseController {
-
-    private static final Logger log = LoggerFactory.getLogger(ExpenseController.class);
 
     @Autowired
     private ExpenseService expenseService;
@@ -86,4 +84,3 @@ public class ExpenseController {
         return Result.ok();
     }
 }
-

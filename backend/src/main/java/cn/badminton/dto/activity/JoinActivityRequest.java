@@ -1,11 +1,13 @@
 package cn.badminton.dto.activity;
 
 import jakarta.validation.constraints.NotBlank;
+import lombok.Data;
 
 /**
  * 参加活动请求
  * 作者: xiaolei
  */
+@Data
 public class JoinActivityRequest {
     @NotBlank
     private String activityId;
@@ -15,11 +17,5 @@ public class JoinActivityRequest {
 
     private String remark = "";
 
-    public String getActivityId() { return activityId; }
-    public void setActivityId(String activityId) { this.activityId = activityId; }
-    public String getUserId() { return userId; }
-    public void setUserId(String userId) { this.userId = userId; }
-    public String getRemark() { return remark; }
     public void setRemark(String remark) { this.remark = remark == null ? "" : remark; }
 }
-

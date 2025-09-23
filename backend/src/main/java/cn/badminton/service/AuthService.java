@@ -1,8 +1,7 @@
 package cn.badminton.service;
 
 import cn.badminton.model.User;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -14,9 +13,8 @@ import org.springframework.stereotype.Service;
  * 作者: xiaolei
  */
 @Service
+@Slf4j
 public class AuthService {
-    
-    private static final Logger logger = LoggerFactory.getLogger(AuthService.class);
     
     @Autowired
     private UserService userService;
@@ -31,7 +29,7 @@ public class AuthService {
      * 用户登录
      */
     public User login(String phone, String password) {
-        logger.info("用户登录，手机号: {}", phone);
+        log.info("用户登录，手机号: {}", phone);
         
         try {
             // 查找用户
@@ -50,11 +48,11 @@ public class AuthService {
                 throw new IllegalArgumentException("密码错误");
             }
             
-            logger.info("用户登录成功，用户ID: {}", user.getId());
+            log.info("用户登录成功，用户ID: {}", user.getId());
             return user;
             
         } catch (Exception e) {
-            logger.error("用户登录失败，手机号: {}, 错误信息: {}", phone, e.getMessage(), e);
+            log.error("用户登录失败，手机号: {}, 错误信息: {}", phone, e.getMessage(), e);
             throw e;
         }
     }
@@ -63,15 +61,15 @@ public class AuthService {
      * 用户注册
      */
     public User register(String phone, String nickname, String password) {
-        logger.info("用户注册，手机号: {}, 昵称: {}", phone, nickname);
+        log.info("用户注册，手机号: {}, 昵称: {}", phone, nickname);
         
         try {
             User user = userService.register(phone, nickname, password);
-            logger.info("用户注册成功，用户ID: {}", user.getId());
+            log.info("用户注册成功，用户ID: {}", user.getId());
             return user;
             
         } catch (Exception e) {
-            logger.error("用户注册失败，手机号: {}, 错误信息: {}", phone, e.getMessage(), e);
+            log.error("用户注册失败，手机号: {}, 错误信息: {}", phone, e.getMessage(), e);
             throw e;
         }
     }
@@ -80,7 +78,7 @@ public class AuthService {
      * 微信授权登录
      */
     public User wechatLogin(String code) {
-        logger.info("微信授权登录，授权码: {}", code);
+        log.info("微信授权登录，授权码: {}", code);
         
         try {
             // 通过授权码获取微信用户信息
@@ -94,17 +92,17 @@ public class AuthService {
             
             if (existingUser != null) {
                 // 用户已存在，直接登录
-                logger.info("微信用户已存在，直接登录，用户ID: {}", existingUser.getId());
+                log.info("微信用户已存在，直接登录，用户ID: {}", existingUser.getId());
                 return existingUser;
             } else {
                 // 新用户，创建账号
                 User newUser = createWechatUser(wechatUserInfo);
-                logger.info("微信新用户注册成功，用户ID: {}", newUser.getId());
+                log.info("微信新用户注册成功，用户ID: {}", newUser.getId());
                 return newUser;
             }
             
         } catch (Exception e) {
-            logger.error("微信授权登录失败，授权码: {}, 错误信息: {}", code, e.getMessage(), e);
+            log.error("微信授权登录失败，授权码: {}, 错误信息: {}", code, e.getMessage(), e);
             throw e;
         }
     }
@@ -113,7 +111,7 @@ public class AuthService {
      * 微信快捷登录（小程序）
      */
     public User wechatMiniProgramLogin(String code, String encryptedData, String iv) {
-        logger.info("微信小程序快捷登录");
+        log.info("微信小程序快捷登录");
         
         try {
             // 通过小程序授权获取用户信息
@@ -127,17 +125,17 @@ public class AuthService {
             
             if (existingUser != null) {
                 // 用户已存在，直接登录
-                logger.info("微信小程序用户已存在，直接登录，用户ID: {}", existingUser.getId());
+                log.info("微信小程序用户已存在，直接登录，用户ID: {}", existingUser.getId());
                 return existingUser;
             } else {
                 // 新用户，创建账号
                 User newUser = createWechatUser(wechatUserInfo);
-                logger.info("微信小程序新用户注册成功，用户ID: {}", newUser.getId());
+                log.info("微信小程序新用户注册成功，用户ID: {}", newUser.getId());
                 return newUser;
             }
             
         } catch (Exception e) {
-            logger.error("微信小程序快捷登录失败，错误信息: {}", e.getMessage(), e);
+            log.error("微信小程序快捷登录失败，错误信息: {}", e.getMessage(), e);
             throw e;
         }
     }
@@ -146,7 +144,7 @@ public class AuthService {
      * 绑定微信账号
      */
     public void bindWechat(String userId, String code) {
-        logger.info("绑定微信账号，用户ID: {}", userId);
+        log.info("绑定微信账号，用户ID: {}", userId);
         
         try {
             // 获取微信用户信息
@@ -158,10 +156,10 @@ public class AuthService {
             // 绑定微信
             userService.bindWechat(userId, wechatUserInfo.getOpenId(), wechatUserInfo.getUnionId());
             
-            logger.info("绑定微信账号成功，用户ID: {}", userId);
+            log.info("绑定微信账号成功，用户ID: {}", userId);
             
         } catch (Exception e) {
-            logger.error("绑定微信账号失败，用户ID: {}, 错误信息: {}", userId, e.getMessage(), e);
+            log.error("绑定微信账号失败，用户ID: {}, 错误信息: {}", userId, e.getMessage(), e);
             throw e;
         }
     }
@@ -170,7 +168,7 @@ public class AuthService {
      * 修改密码
      */
     public void changePassword(String userId, String oldPassword, String newPassword) {
-        logger.info("修改密码，用户ID: {}", userId);
+        log.info("修改密码，用户ID: {}", userId);
         
         try {
             // 获取用户
@@ -193,10 +191,10 @@ public class AuthService {
             user.setPassword(passwordEncoder.encode(newPassword));
             userService.updateUser(user);
             
-            logger.info("修改密码成功，用户ID: {}", userId);
+            log.info("修改密码成功，用户ID: {}", userId);
             
         } catch (Exception e) {
-            logger.error("修改密码失败，用户ID: {}, 错误信息: {}", userId, e.getMessage(), e);
+            log.error("修改密码失败，用户ID: {}, 错误信息: {}", userId, e.getMessage(), e);
             throw e;
         }
     }
@@ -205,7 +203,7 @@ public class AuthService {
      * 重置密码
      */
     public void resetPassword(String phone, String newPassword) {
-        logger.info("重置密码，手机号: {}", phone);
+        log.info("重置密码，手机号: {}", phone);
         
         try {
             // 查找用户
@@ -223,10 +221,10 @@ public class AuthService {
             user.setPassword(passwordEncoder.encode(newPassword));
             userService.updateUser(user);
             
-            logger.info("重置密码成功，手机号: {}", phone);
+            log.info("重置密码成功，手机号: {}", phone);
             
         } catch (Exception e) {
-            logger.error("重置密码失败，手机号: {}, 错误信息: {}", phone, e.getMessage(), e);
+            log.error("重置密码失败，手机号: {}, 错误信息: {}", phone, e.getMessage(), e);
             throw e;
         }
     }
@@ -235,17 +233,17 @@ public class AuthService {
      * 验证用户身份
      */
     public boolean validateUser(String userId) {
-        logger.debug("验证用户身份，用户ID: {}", userId);
+        log.debug("验证用户身份，用户ID: {}", userId);
         
         try {
             User user = userService.findById(userId);
             boolean isValid = user != null && user.getStatus() == 1;
             
-            logger.debug("用户身份验证结果: {}", isValid ? "有效" : "无效");
+            log.debug("用户身份验证结果: {}", isValid ? "有效" : "无效");
             return isValid;
             
         } catch (Exception e) {
-            logger.error("验证用户身份失败，用户ID: {}, 错误信息: {}", userId, e.getMessage(), e);
+            log.error("验证用户身份失败，用户ID: {}, 错误信息: {}", userId, e.getMessage(), e);
             return false;
         }
     }

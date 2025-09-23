@@ -9,8 +9,7 @@ import cn.badminton.dto.user.UserResponse;
 import cn.badminton.model.User;
 import cn.badminton.service.UserService;
 import jakarta.validation.Valid;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,10 +24,9 @@ import java.util.stream.Collectors;
  * 作者: xiaolei
  */
 @RestController
+@Slf4j
 @RequestMapping("/api/user")
 public class UserController {
-
-    private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
     @Autowired
     private UserService userService;
@@ -77,4 +75,3 @@ public class UserController {
         return Result.ok();
     }
 }
-

@@ -2,8 +2,7 @@ package cn.badminton.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -22,9 +21,8 @@ import java.util.Map;
  * 作者: xiaolei
  */
 @Service
+@Slf4j
 public class WechatService {
-    
-    private static final Logger logger = LoggerFactory.getLogger(WechatService.class);
     
     @Value("${wechat.appid:}")
     private String appId;
@@ -45,7 +43,7 @@ public class WechatService {
      * 通过授权码获取access_token
      */
     public String getAccessToken(String code) {
-        logger.info("获取微信access_token，授权码: {}", code);
+        log.info("获取微信access_token，授权码: {}", code);
         
         try {
             String url = String.format(
@@ -54,23 +52,23 @@ public class WechatService {
             );
             
             String response = restTemplate.getForObject(url, String.class);
-            logger.debug("微信API响应: {}", response);
+            log.debug("微信API响应: {}", response);
             
             JsonNode jsonNode = objectMapper.readTree(response);
             
             if (jsonNode.has("errcode")) {
                 int errcode = jsonNode.get("errcode").asInt();
                 String errmsg = jsonNode.get("errmsg").asText();
-                logger.error("获取access_token失败，错误码: {}, 错误信息: {}", errcode, errmsg);
+                log.error("获取access_token失败，错误码: {}, 错误信息: {}", errcode, errmsg);
                 throw new RuntimeException("微信授权失败: " + errmsg);
             }
             
             String accessToken = jsonNode.get("access_token").asText();
-            logger.info("获取access_token成功");
+            log.info("获取access_token成功");
             return accessToken;
             
         } catch (Exception e) {
-            logger.error("获取微信access_token异常，授权码: {}, 错误信息: {}", code, e.getMessage(), e);
+            log.error("获取微信access_token异常，授权码: {}, 错误信息: {}", code, e.getMessage(), e);
             throw new RuntimeException("获取微信授权令牌失败", e);
         }
     }
@@ -79,7 +77,7 @@ public class WechatService {
      * 通过access_token获取用户信息
      */
     public WechatUserInfo getUserInfo(String accessToken, String openId) {
-        logger.info("获取微信用户信息，openId: {}", openId);
+        log.info("获取微信用户信息，openId: {}", openId);
         
         try {
             String url = String.format(
@@ -88,14 +86,14 @@ public class WechatService {
             );
             
             String response = restTemplate.getForObject(url, String.class);
-            logger.debug("微信用户信息API响应: {}", response);
+            log.debug("微信用户信息API响应: {}", response);
             
             JsonNode jsonNode = objectMapper.readTree(response);
             
             if (jsonNode.has("errcode")) {
                 int errcode = jsonNode.get("errcode").asInt();
                 String errmsg = jsonNode.get("errmsg").asText();
-                logger.error("获取用户信息失败，错误码: {}, 错误信息: {}", errcode, errmsg);
+                log.error("获取用户信息失败，错误码: {}, 错误信息: {}", errcode, errmsg);
                 throw new RuntimeException("获取微信用户信息失败: " + errmsg);
             }
             
@@ -105,11 +103,11 @@ public class WechatService {
             userInfo.setAvatarUrl(jsonNode.get("headimgurl").asText());
             userInfo.setUnionId(jsonNode.has("unionid") ? jsonNode.get("unionid").asText() : null);
             
-            logger.info("获取微信用户信息成功，昵称: {}", userInfo.getNickname());
+            log.info("获取微信用户信息成功，昵称: {}", userInfo.getNickname());
             return userInfo;
             
         } catch (Exception e) {
-            logger.error("获取微信用户信息异常，openId: {}, 错误信息: {}", openId, e.getMessage(), e);
+            log.error("获取微信用户信息异常，openId: {}, 错误信息: {}", openId, e.getMessage(), e);
             throw new RuntimeException("获取微信用户信息失败", e);
         }
     }
@@ -118,7 +116,7 @@ public class WechatService {
      * 通过授权码直接获取用户信息
      */
     public WechatUserInfo getUserInfoByCode(String code) {
-        logger.info("通过授权码获取微信用户信息");
+        log.info("通过授权码获取微信用户信息");
         
         try {
             // 获取access_token和openid
@@ -133,7 +131,7 @@ public class WechatService {
             if (tokenNode.has("errcode")) {
                 int errcode = tokenNode.get("errcode").asInt();
                 String errmsg = tokenNode.get("errmsg").asText();
-                logger.error("获取access_token失败，错误码: {}, 错误信息: {}", errcode, errmsg);
+                log.error("获取access_token失败，错误码: {}, 错误信息: {}", errcode, errmsg);
                 return null;
             }
             
@@ -144,7 +142,7 @@ public class WechatService {
             return getUserInfo(accessToken, openId);
             
         } catch (Exception e) {
-            logger.error("通过授权码获取微信用户信息异常，错误信息: {}", e.getMessage(), e);
+            log.error("通过授权码获取微信用户信息异常，错误信息: {}", e.getMessage(), e);
             return null;
         }
     }
@@ -153,7 +151,7 @@ public class WechatService {
      * 小程序登录，获取session_key和openid
      */
     public Map<String, String> getMiniProgramSession(String code) {
-        logger.info("小程序登录，获取session信息");
+        log.info("小程序登录，获取session信息");
         
         try {
             String url = String.format(
@@ -162,14 +160,14 @@ public class WechatService {
             );
             
             String response = restTemplate.getForObject(url, String.class);
-            logger.debug("小程序登录API响应: {}", response);
+            log.debug("小程序登录API响应: {}", response);
             
             JsonNode jsonNode = objectMapper.readTree(response);
             
             if (jsonNode.has("errcode")) {
                 int errcode = jsonNode.get("errcode").asInt();
                 String errmsg = jsonNode.get("errmsg").asText();
-                logger.error("小程序登录失败，错误码: {}, 错误信息: {}", errcode, errmsg);
+                log.error("小程序登录失败，错误码: {}, 错误信息: {}", errcode, errmsg);
                 return null;
             }
             
@@ -180,11 +178,11 @@ public class WechatService {
                 sessionInfo.put("unionid", jsonNode.get("unionid").asText());
             }
             
-            logger.info("小程序登录成功");
+            log.info("小程序登录成功");
             return sessionInfo;
             
         } catch (Exception e) {
-            logger.error("小程序登录异常，错误信息: {}", e.getMessage(), e);
+            log.error("小程序登录异常，错误信息: {}", e.getMessage(), e);
             return null;
         }
     }
@@ -193,13 +191,13 @@ public class WechatService {
      * 解密小程序用户信息
      */
     public WechatUserInfo getMiniProgramUserInfo(String code, String encryptedData, String iv) {
-        logger.info("解密小程序用户信息");
+        log.info("解密小程序用户信息");
         
         try {
             // 获取session信息
             Map<String, String> sessionInfo = getMiniProgramSession(code);
             if (sessionInfo == null) {
-                logger.error("获取小程序session信息失败");
+                log.error("获取小程序session信息失败");
                 return null;
             }
             
@@ -231,7 +229,7 @@ public class WechatService {
             }
             
         } catch (Exception e) {
-            logger.error("解密小程序用户信息异常，错误信息: {}", e.getMessage(), e);
+            log.error("解密小程序用户信息异常，错误信息: {}", e.getMessage(), e);
             return null;
         }
     }
@@ -254,7 +252,7 @@ public class WechatService {
             return new String(decrypted, "UTF-8");
             
         } catch (Exception e) {
-            logger.error("AES解密失败，错误信息: {}", e.getMessage(), e);
+            log.error("AES解密失败，错误信息: {}", e.getMessage(), e);
             throw new RuntimeException("解密失败", e);
         }
     }

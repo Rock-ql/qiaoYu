@@ -10,8 +10,7 @@ import cn.badminton.dto.common.UserIdRequest;
 import cn.badminton.model.BookingActivity;
 import cn.badminton.service.ActivityService;
 import jakarta.validation.Valid;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,10 +24,9 @@ import java.util.List;
  * 作者: xiaolei
  */
 @RestController
+@Slf4j
 @RequestMapping("/api/activity")
 public class ActivityController {
-
-    private static final Logger log = LoggerFactory.getLogger(ActivityController.class);
 
     @Autowired
     private ActivityService activityService;
@@ -105,4 +103,3 @@ public class ActivityController {
         return Result.ok(activityService.getActivitiesByTimeRange(req.getStartTime(), req.getEndTime()));
     }
 }
-

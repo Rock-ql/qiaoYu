@@ -4,8 +4,7 @@ import cn.badminton.model.BookingActivity;
 import cn.badminton.model.ExpenseRecord;
 import cn.badminton.model.ExpenseShare;
 import cn.badminton.repository.ExpenseRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,9 +21,8 @@ import java.util.Map;
  * 作者: xiaolei
  */
 @Service
+@Slf4j
 public class ExpenseService {
-    
-    private static final Logger logger = LoggerFactory.getLogger(ExpenseService.class);
     
     @Autowired
     private ExpenseRepository expenseRepository;
@@ -40,7 +38,7 @@ public class ExpenseService {
      */
     public ExpenseRecord createExpense(String activityId, String payerId, String title, 
                                      BigDecimal totalAmount, String description, Integer shareType) {
-        logger.info("创建费用记录，活动ID: {}, 付款人: {}, 标题: {}, 金额: {}", activityId, payerId, title, totalAmount);
+        log.info("创建费用记录，活动ID: {}, 付款人: {}, 标题: {}, 金额: {}", activityId, payerId, title, totalAmount);
         
         try {
             // 参数验证
@@ -81,11 +79,11 @@ public class ExpenseService {
             
             expense = expenseRepository.saveExpense(expense);
             
-            logger.info("创建费用记录成功，费用ID: {}", expense.getId());
+            log.info("创建费用记录成功，费用ID: {}", expense.getId());
             return expense;
             
         } catch (Exception e) {
-            logger.error("创建费用记录失败，活动ID: {}, 错误信息: {}", activityId, e.getMessage(), e);
+            log.error("创建费用记录失败，活动ID: {}, 错误信息: {}", activityId, e.getMessage(), e);
             throw e;
         }
     }
@@ -95,7 +93,7 @@ public class ExpenseService {
      */
     public List<ExpenseShare> createExpenseShares(String expenseId, List<String> participantIds, 
                                                 Map<String, BigDecimal> customAmounts) {
-        logger.info("创建费用分摊，费用ID: {}, 参与人数: {}", expenseId, participantIds.size());
+        log.info("创建费用分摊，费用ID: {}, 参与人数: {}", expenseId, participantIds.size());
         
         try {
             // 获取费用记录
@@ -141,11 +139,11 @@ public class ExpenseService {
             
             // 费用记录已经保存，无需更新状态
             
-            logger.info("创建费用分摊成功，费用ID: {}, 分摊记录数: {}", expenseId, shares.size());
+            log.info("创建费用分摊成功，费用ID: {}, 分摊记录数: {}", expenseId, shares.size());
             return shares;
             
         } catch (Exception e) {
-            logger.error("创建费用分摊失败，费用ID: {}, 错误信息: {}", expenseId, e.getMessage(), e);
+            log.error("创建费用分摊失败，费用ID: {}, 错误信息: {}", expenseId, e.getMessage(), e);
             throw e;
         }
     }
@@ -154,7 +152,7 @@ public class ExpenseService {
      * 确认分摊
      */
     public void confirmShare(String shareId, String userId) {
-        logger.info("确认分摊，分摊ID: {}, 用户ID: {}", shareId, userId);
+        log.info("确认分摊，分摊ID: {}, 用户ID: {}", shareId, userId);
         
         try {
             ExpenseShare share = expenseRepository.findShareById(shareId);
@@ -174,10 +172,10 @@ public class ExpenseService {
             share.settle();
             expenseRepository.saveShare(share);
             
-            logger.info("确认分摊成功，分摊ID: {}", shareId);
+            log.info("确认分摊成功，分摊ID: {}", shareId);
             
         } catch (Exception e) {
-            logger.error("确认分摊失败，分摊ID: {}, 用户ID: {}, 错误信息: {}", shareId, userId, e.getMessage(), e);
+            log.error("确认分摊失败，分摊ID: {}, 用户ID: {}, 错误信息: {}", shareId, userId, e.getMessage(), e);
             throw e;
         }
     }
@@ -186,7 +184,7 @@ public class ExpenseService {
      * 标记为已支付
      */
     public void markAsPaid(String shareId, String userId) {
-        logger.info("标记为已支付，分摊ID: {}, 用户ID: {}", shareId, userId);
+        log.info("标记为已支付，分摊ID: {}, 用户ID: {}", shareId, userId);
         
         try {
             ExpenseShare share = expenseRepository.findShareById(shareId);
@@ -210,10 +208,10 @@ public class ExpenseService {
             // 增加用户消费金额
             userService.addUserExpense(share.getUserId(), share.getAmount());
             
-            logger.info("标记为已支付成功，分摊ID: {}", shareId);
+            log.info("标记为已支付成功，分摊ID: {}", shareId);
             
         } catch (Exception e) {
-            logger.error("标记为已支付失败，分摊ID: {}, 用户ID: {}, 错误信息: {}", shareId, userId, e.getMessage(), e);
+            log.error("标记为已支付失败，分摊ID: {}, 用户ID: {}, 错误信息: {}", shareId, userId, e.getMessage(), e);
             throw e;
         }
     }
@@ -222,15 +220,15 @@ public class ExpenseService {
      * 获取活动的费用记录
      */
     public List<ExpenseRecord> getActivityExpenses(String activityId) {
-        logger.debug("获取活动的费用记录，活动ID: {}", activityId);
+        log.debug("获取活动的费用记录，活动ID: {}", activityId);
         
         try {
             List<ExpenseRecord> expenses = expenseRepository.findExpensesByActivityId(activityId);
-            logger.debug("获取活动费用记录成功，记录数: {}", expenses.size());
+            log.debug("获取活动费用记录成功，记录数: {}", expenses.size());
             return expenses;
             
         } catch (Exception e) {
-            logger.error("获取活动费用记录失败，活动ID: {}, 错误信息: {}", activityId, e.getMessage(), e);
+            log.error("获取活动费用记录失败，活动ID: {}, 错误信息: {}", activityId, e.getMessage(), e);
             throw e;
         }
     }
@@ -239,15 +237,15 @@ public class ExpenseService {
      * 获取费用的分摊记录
      */
     public List<ExpenseShare> getExpenseShares(String expenseId) {
-        logger.debug("获取费用的分摊记录，费用ID: {}", expenseId);
+        log.debug("获取费用的分摊记录，费用ID: {}", expenseId);
         
         try {
             List<ExpenseShare> shares = expenseRepository.findSharesByExpenseId(expenseId);
-            logger.debug("获取费用分摊记录成功，记录数: {}", shares.size());
+            log.debug("获取费用分摊记录成功，记录数: {}", shares.size());
             return shares;
             
         } catch (Exception e) {
-            logger.error("获取费用分摊记录失败，费用ID: {}, 错误信息: {}", expenseId, e.getMessage(), e);
+            log.error("获取费用分摊记录失败，费用ID: {}, 错误信息: {}", expenseId, e.getMessage(), e);
             throw e;
         }
     }
@@ -256,15 +254,15 @@ public class ExpenseService {
      * 获取用户的分摊记录
      */
     public List<ExpenseShare> getUserShares(String userId) {
-        logger.debug("获取用户的分摊记录，用户ID: {}", userId);
+        log.debug("获取用户的分摊记录，用户ID: {}", userId);
         
         try {
             List<ExpenseShare> shares = expenseRepository.findSharesByUserId(userId);
-            logger.debug("获取用户分摊记录成功，记录数: {}", shares.size());
+            log.debug("获取用户分摊记录成功，记录数: {}", shares.size());
             return shares;
             
         } catch (Exception e) {
-            logger.error("获取用户分摊记录失败，用户ID: {}, 错误信息: {}", userId, e.getMessage(), e);
+            log.error("获取用户分摊记录失败，用户ID: {}, 错误信息: {}", userId, e.getMessage(), e);
             throw e;
         }
     }
@@ -273,7 +271,7 @@ public class ExpenseService {
      * 删除费用记录
      */
     public void deleteExpense(String expenseId, String userId) {
-        logger.info("删除费用记录，费用ID: {}, 用户ID: {}", expenseId, userId);
+        log.info("删除费用记录，费用ID: {}, 用户ID: {}", expenseId, userId);
         
         try {
             ExpenseRecord expense = expenseRepository.findExpenseById(expenseId);
@@ -293,10 +291,10 @@ public class ExpenseService {
             
             expenseRepository.deleteExpenseById(expenseId);
             
-            logger.info("删除费用记录成功，费用ID: {}", expenseId);
+            log.info("删除费用记录成功，费用ID: {}", expenseId);
             
         } catch (Exception e) {
-            logger.error("删除费用记录失败，费用ID: {}, 用户ID: {}, 错误信息: {}", expenseId, userId, e.getMessage(), e);
+            log.error("删除费用记录失败，费用ID: {}, 用户ID: {}, 错误信息: {}", expenseId, userId, e.getMessage(), e);
             throw e;
         }
     }
@@ -370,15 +368,15 @@ public class ExpenseService {
      * 根据ID获取费用记录
      */
     public ExpenseRecord getExpenseById(String expenseId) {
-        logger.debug("根据ID获取费用记录: {}", expenseId);
+        log.debug("根据ID获取费用记录: {}", expenseId);
         
         try {
             ExpenseRecord expense = expenseRepository.findExpenseById(expenseId);
-            logger.debug("获取费用记录结果: {}", expense != null ? "找到" : "未找到");
+            log.debug("获取费用记录结果: {}", expense != null ? "找到" : "未找到");
             return expense;
             
         } catch (Exception e) {
-            logger.error("根据ID获取费用记录失败，费用ID: {}, 错误信息: {}", expenseId, e.getMessage(), e);
+            log.error("根据ID获取费用记录失败，费用ID: {}, 错误信息: {}", expenseId, e.getMessage(), e);
             return null;
         }
     }
