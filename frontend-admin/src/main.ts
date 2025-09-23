@@ -1,4 +1,7 @@
 import './assets/main.css'
+// 引入全局样式系统
+import './styles/variables.scss'
+import './styles/utils.scss'
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'

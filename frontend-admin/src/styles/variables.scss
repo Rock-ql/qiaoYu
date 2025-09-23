@@ -1,0 +1,165 @@
+// 羽毛球预约系统后台管理 - 主题变量
+// ===========================================
+
+// 1. 主色调系统 (基于羽毛球运动主题)
+// -------------------------------------------
+$primary-color: #00C853;        // 羽毛球绿 (主色调)
+$primary-light: #69F0AE;        // 浅绿色
+$primary-dark: #00A142;         // 深绿色
+
+$secondary-color: #FF6D00;       // 活力橙 (辅助色)
+$secondary-light: #FFB74D;       // 浅橙色
+$secondary-dark: #E65100;        // 深橙色
+
+// 2. 中性色系
+// -------------------------------------------
+$white: #FFFFFF;                 // 纯白
+$black: #000000;                 // 纯黑
+
+$text-primary: #303133;          // 主要文本色
+$text-regular: #606266;          // 常规文本色
+$text-secondary: #909399;        // 次要文本色
+$text-placeholder: #C0C4CC;      // 占位文本色
+
+$bg-primary: #FFFFFF;            // 主背景色
+$bg-secondary: #F5F7FA;          // 次背景色
+$bg-disabled: #F0F2F5;           // 禁用背景色
+
+$border-primary: #DCDFE6;        // 主边框色
+$border-secondary: #E4E7ED;      // 次边框色
+$border-light: #EBEEF5;          // 浅边框色
+
+// 3. 功能色系
+// -------------------------------------------
+$success-color: #67C23A;         // 成功色
+$warning-color: #E6A23C;         // 警告色
+$danger-color: #F56C6C;          // 危险色
+$info-color: #909399;            // 信息色
+
+$success-light: #E1F3D8;         // 浅成功色
+$warning-light: #FAECD8;         // 浅警告色
+$danger-light: #FDE2E2;          // 浅危险色
+$info-light: #F4F4F5;            // 浅信息色
+
+// 4. 尺寸系统 (基于8px网格)
+// -------------------------------------------
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 16px;
+$spacing-lg: 24px;
+$spacing-xl: 32px;
+$spacing-xxl: 48px;
+
+// 边距和内边距
+$margin-xs: $spacing-xs;
+$margin-sm: $spacing-sm;
+$margin-md: $spacing-md;
+$margin-lg: $spacing-lg;
+$margin-xl: $spacing-xl;
+
+$padding-xs: $spacing-xs;
+$padding-sm: $spacing-sm;
+$padding-md: $spacing-md;
+$padding-lg: $spacing-lg;
+$padding-xl: $spacing-xl;
+
+// 5. 字体系统
+// -------------------------------------------
+$font-family-primary: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC', 'Source Han Sans SC', 'Noto Sans CJK SC', 'WenQuanYi Micro Hei', sans-serif;
+$font-family-mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Monaco, 'Courier New', monospace;
+
+$font-size-xs: 12px;
+$font-size-sm: 13px;
+$font-size-base: 14px;
+$font-size-md: 16px;
+$font-size-lg: 18px;
+$font-size-xl: 20px;
+$font-size-xxl: 24px;
+
+$font-weight-light: 300;
+$font-weight-normal: 400;
+$font-weight-medium: 500;
+$font-weight-bold: 600;
+$font-weight-bolder: 700;
+
+$line-height-base: 1.5;
+$line-height-small: 1.2;
+$line-height-large: 1.8;
+
+// 6. 圆角系统
+// -------------------------------------------
+$border-radius-xs: 2px;
+$border-radius-sm: 4px;
+$border-radius-base: 6px;
+$border-radius-md: 8px;
+$border-radius-lg: 12px;
+$border-radius-xl: 16px;
+$border-radius-round: 50%;
+
+// 7. 阴影系统
+// -------------------------------------------
+$box-shadow-light: 0 2px 4px rgba(0, 0, 0, 0.12), 0 0 6px rgba(0, 0, 0, 0.04);
+$box-shadow-base: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+$box-shadow-dark: 0 4px 12px rgba(0, 0, 0, 0.15);
+
+// 8. 过渡动画
+// -------------------------------------------
+$transition-base: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+$transition-fade: opacity 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+$transition-md: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+$transition-slow: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+
+// 9. Z-index层级
+// -------------------------------------------
+$z-index-normal: 1;
+$z-index-top: 1000;
+$z-index-popper: 2000;
+$z-index-message: 3000;
+$z-index-overlay: 4000;
+
+// 10. 布局尺寸
+// -------------------------------------------
+$header-height: 60px;
+$sidebar-width: 240px;
+$sidebar-collapsed-width: 64px;
+$footer-height: 50px;
+
+// 容器最大宽度
+$container-max-width: 1200px;
+$container-lg-width: 992px;
+$container-md-width: 768px;
+$container-sm-width: 576px;
+
+// 11. 响应式断点
+// -------------------------------------------
+$breakpoint-xs: 480px;
+$breakpoint-sm: 768px;
+$breakpoint-md: 992px;
+$breakpoint-lg: 1200px;
+$breakpoint-xl: 1920px;
+
+// 12. Element Plus 自定义变量
+// -------------------------------------------
+// 覆盖Element Plus的默认主题色
+:root {
+  --el-color-primary: #{$primary-color};
+  --el-color-primary-light-3: #{$primary-light};
+  --el-color-primary-dark-2: #{$primary-dark};
+  
+  --el-color-success: #{$success-color};
+  --el-color-warning: #{$warning-color};
+  --el-color-danger: #{$danger-color};
+  --el-color-info: #{$info-color};
+  
+  --el-text-color-primary: #{$text-primary};
+  --el-text-color-regular: #{$text-regular};
+  --el-text-color-secondary: #{$text-secondary};
+  --el-text-color-placeholder: #{$text-placeholder};
+  
+  --el-bg-color: #{$bg-primary};
+  --el-bg-color-page: #{$bg-secondary};
+  
+  --el-border-color: #{$border-primary};
+  --el-border-color-light: #{$border-secondary};
+  --el-border-color-lighter: #{$border-light};
+}
