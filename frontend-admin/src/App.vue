@@ -1,10 +1,14 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
+import { RouterLink, RouterView, useRoute } from 'vue-router'
 import HelloWorld from './components/HelloWorld.vue'
+
+// 登录/注册页不展示默认头部
+const route = useRoute()
+const isAuthPage = () => ['login', 'register'].includes(String(route.name))
 </script>
 
 <template>
-  <header>
+  <header v-if="!isAuthPage()">
     <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
 
     <div class="wrapper">
