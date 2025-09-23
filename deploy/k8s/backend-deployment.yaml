@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: badminton-backend
+  labels: { app: badminton-backend }
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: badminton-backend }
+  template:
+    metadata:
+      labels: { app: badminton-backend }
+    spec:
+      containers:
+        - name: backend
+          image: ghcr.io/your-org/badminton-backend:0.1.0 # 替换为你的镜像地址
+          ports: [{ containerPort: 8080 }]
+          env:
+            - { name: SPRING_DATA_REDIS_HOST, value: redis }
+            - { name: SPRING_DATA_REDIS_PORT, value: "6379" }
+            - { name: JWT_SECRET, valueFrom: { secretKeyRef: { name: badminton-secrets, key: jwt-secret } } }
+            - { name: SPRING_PROFILES_ACTIVE, value: docker }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: badminton-backend
+spec:
+  selector: { app: badminton-backend }
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: badminton-secrets
+type: Opaque
+stringData:
+  jwt-secret: please-reset-32-bytes # 生产环境请替换
+
