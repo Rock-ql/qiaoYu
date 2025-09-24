@@ -8,6 +8,7 @@ import { createPinia } from 'pinia'
 // 引入 Element Plus 组件库
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
+import './styles/element-overrides.css'
 
 import App from './App.vue'
 import router from './router'

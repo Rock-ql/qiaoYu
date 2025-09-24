@@ -17,24 +17,21 @@ onMounted(async () => {
 
 <template>
   <div>
-    <h2>用户管理</h2>
-    <div v-if="loading">加载中...</div>
-    <table v-else>
-      <thead><tr><th>ID</th><th>昵称</th><th>手机号</th><th>状态</th></tr></thead>
-      <tbody>
-        <tr v-for="u in list" :key="u.id">
-          <td>{{ u.id }}</td>
-          <td>{{ u.nickname }}</td>
-          <td>{{ u.phone }}</td>
-          <td>{{ u.status === 1 ? '正常' : '禁用' }}</td>
-        </tr>
-      </tbody>
-    </table>
+    <h2 style="margin:0 0 12px 0;">用户管理</h2>
+    <el-table v-loading="loading" :data="list" stripe border size="large" header-cell-class-name="table-header" :header-row-style="{ height: '46px' }" :row-style="{ height: '46px' }">
+      <el-table-column prop="id" label="ID" min-width="280" align="left" header-align="left" />
+      <el-table-column prop="nickname" label="昵称" min-width="120" align="left" header-align="left" />
+      <el-table-column prop="phone" label="手机号" min-width="160" align="left" header-align="left" />
+      <el-table-column label="状态" min-width="100" align="left" header-align="left">
+        <template #default="{ row }">
+          <el-tag :type="row.status === 1 ? 'success' : 'warning'">{{ row.status === 1 ? '正常' : '禁用' }}</el-tag>
+        </template>
+      </el-table-column>
+    </el-table>
   </div>
   
 </template>
 
 <style scoped>
-table { border-collapse: collapse; width: 100%; }
-th, td { border: 1px solid #eee; padding: 6px 8px; }
+.table-header { font-weight: 600; color: #374151; }
 </style>

@@ -1,0 +1,40 @@
+/* 全局样式覆盖：让UI更简洁美观 */
+
+/* 页面背景与容器间距 */
+body { background: #f7f8fa; }
+
+/* 表格美化：表头与内容对齐、行高、边框、悬浮效果 */
+.el-table {
+  --row-height: 46px;
+  --header-bg: #f5f7fa;
+  --border-color: #edf0f5;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.el-table thead th { 
+  background: var(--header-bg) !important; 
+  color: #374151; 
+  font-weight: 600; 
+}
+
+.el-table th, .el-table td { 
+  padding: 12px 16px !important; 
+  height: var(--row-height);
+  border-color: var(--border-color) !important;
+}
+
+.el-table .cell, .el-table th .cell { 
+  display: flex; 
+  align-items: center; 
+}
+
+.el-table__body tr:hover > td { background: #fafcff !important; }
+
+/* 卡片圆角与阴影更柔和 */
+.el-card.content-card { border-radius: 12px; box-shadow: 0 6px 18px rgba(15,23,42,0.06); }
+
+/* 面包屑与头部间距 */
+.breadcrumb { margin-left: 8px; }
+

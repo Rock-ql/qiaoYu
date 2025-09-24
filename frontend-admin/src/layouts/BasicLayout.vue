@@ -29,8 +29,8 @@ async function onLogout() {
   <el-container class="admin-layout">
     <el-aside :width="collapsed ? '64px' : '220px'" class="aside">
       <div class="brand" @click="router.push('/')">
-        <img class="logo" src="/favicon.ico" alt="logo" />
-        <span v-if="!collapsed">羽毛球后台</span>
+        <span class="logo-text" v-if="!collapsed">羽毛球后台</span>
+        <span v-else>羽</span>
       </div>
       <el-menu :default-active="activePath" class="menu" router :collapse="collapsed">
         <template v-for="item in menuConfig" :key="item.path">
@@ -80,7 +80,7 @@ async function onLogout() {
 .admin-layout { min-height: 100vh; }
 .aside { border-right: 1px solid #eef0f4; }
 .brand { height: 56px; display:flex; align-items:center; gap:10px; padding:0 12px; font-weight:600; cursor:pointer; }
-.logo { width:24px; height:24px; border-radius:6px; }
+.logo-text { font-size: 16px; }
 .menu { border-right: none; }
 .header { height:56px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid #eef0f4; }
 .left { display:flex; align-items:center; gap:12px; }
