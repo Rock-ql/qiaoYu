@@ -1,33 +1,92 @@
 <script setup lang="ts">
-import { useAuthStore } from '../stores/auth'
-import { useRouter, RouterView, RouterLink } from 'vue-router'
+import { computed, ref } from 'vue'
+import { useRoute, useRouter, RouterView } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
+import { menuConfig } from '@/router/admin'
+import { ElMessageBox } from 'element-plus'
+import * as Icons from '@element-plus/icons-vue'
 
-const auth = useAuthStore()
 const router = useRouter()
-const logout = () => { auth.logout(); router.push('/login') }
+const route = useRoute()
+const auth = useAuthStore()
+
+// 侧边栏折叠
+const collapsed = ref(false)
+const activePath = computed(() => route.path)
+
+function iconByName(name?: string) {
+  if (!name) return null
+  return (Icons as any)[name] || null
+}
+
+async function onLogout() {
+  const ok = await ElMessageBox.confirm('确定要退出登录吗？', '退出确认', { type: 'warning' }).catch(() => false)
+  if (ok) auth.logout()
+}
 </script>
 
 <template>
-  <header class="header">
-    <div class="brand">Badminton Admin</div>
-    <div class="nav">
-      <RouterLink to="/">首页</RouterLink>
-      <RouterLink to="/about">关于</RouterLink>
-      <RouterLink to="/users">用户</RouterLink>
-      <RouterLink to="/activities">活动</RouterLink>
-      <RouterLink to="/expense">费用</RouterLink>
-      <RouterLink to="/settings">设置</RouterLink>
-      <a href="javascript:;" @click="logout">退出</a>
-    </div>
-  </header>
-  <main class="content">
-    <RouterView />
-  </main>
+  <el-container class="admin-layout">
+    <el-aside :width="collapsed ? '64px' : '220px'" class="aside">
+      <div class="brand" @click="router.push('/')">
+        <img class="logo" src="/favicon.ico" alt="logo" />
+        <span v-if="!collapsed">羽毛球后台</span>
+      </div>
+      <el-menu :default-active="activePath" class="menu" router :collapse="collapsed">
+        <template v-for="item in menuConfig" :key="item.path">
+          <el-menu-item :index="item.path">
+            <component v-if="iconByName(item.icon)" :is="iconByName(item.icon)" />
+            <span>{{ item.title }}</span>
+          </el-menu-item>
+        </template>
+      </el-menu>
+    </el-aside>
+
+    <el-container>
+      <el-header class="header">
+        <div class="left">
+          <el-button text @click="collapsed = !collapsed" :icon="collapsed ? Icons.Expand : Icons.Fold" />
+          <el-breadcrumb separator="/" class="breadcrumb">
+            <el-breadcrumb-item to="/dashboard">首页</el-breadcrumb-item>
+            <el-breadcrumb-item v-for="(bc, idx) in (route.meta.breadcrumb || [])" :key="idx" :to="bc.path">{{ bc.title }}</el-breadcrumb-item>
+          </el-breadcrumb>
+        </div>
+        <div class="right">
+          <el-dropdown>
+            <span class="user">
+              <el-avatar size="small" :icon="Icons.UserFilled" />
+              <span class="name">{{ auth.currentUser?.nickname || auth.currentUser?.username || '用户' }}</span>
+            </span>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item @click="router.push('/settings')">个人设置</el-dropdown-item>
+                <el-dropdown-item divided @click="onLogout">退出登录</el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
+        </div>
+      </el-header>
+
+      <el-main class="main">
+        <el-card shadow="never" class="content-card">
+          <RouterView />
+        </el-card>
+      </el-main>
+    </el-container>
+  </el-container>
 </template>
 
 <style scoped>
-.header { display:flex; justify-content:space-between; align-items:center; padding:12px 16px; background:#f5f5f5; }
-.brand { font-weight: bold; }
-.nav a { margin-left: 12px; }
-.content { padding: 16px; }
+.admin-layout { min-height: 100vh; }
+.aside { border-right: 1px solid #eef0f4; }
+.brand { height: 56px; display:flex; align-items:center; gap:10px; padding:0 12px; font-weight:600; cursor:pointer; }
+.logo { width:24px; height:24px; border-radius:6px; }
+.menu { border-right: none; }
+.header { height:56px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid #eef0f4; }
+.left { display:flex; align-items:center; gap:12px; }
+.breadcrumb { margin-left: 6px; }
+.right .user { display:inline-flex; align-items:center; gap:8px; }
+.name { color:#374151; }
+.main { background: #f7f8fa; padding: 16px; }
+.content-card { min-height: calc(100vh - 56px - 32px); }
 </style>
