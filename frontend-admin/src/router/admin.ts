@@ -1,7 +1,7 @@
 // 羽毛球预约系统后台管理 - 路由配置
 // ===========================================
 
-import { RouteRecordRaw } from 'vue-router'
+import type { RouteRecordRaw } from 'vue-router'
 
 /**
  * 后台管理路由配置
