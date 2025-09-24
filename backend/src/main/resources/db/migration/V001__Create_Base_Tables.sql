@@ -2,6 +2,9 @@
 -- 作者: xiaolei
 -- 说明: 将Redis存储的实体迁移到MySQL持久化存储
 
+-- ==================== 数据表创建 ====================
+-- 注意：Flyway已经连接到badminton数据库，无需USE语句
+
 -- 1. 用户表
 CREATE TABLE `user` (
     `id` varchar(36) NOT NULL COMMENT '用户ID',
