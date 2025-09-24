@@ -1,4 +1,4 @@
-import './assets/main.css'
+// 移除 Vite 模板默认样式，统一采用 Element Plus 与自定义覆盖样式
 // 引入全局样式系统
 import './styles/variables.scss'
 import './styles/utils.scss'

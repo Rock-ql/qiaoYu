@@ -11,7 +11,6 @@ const route = useRoute()
 const auth = useAuthStore()
 
 // 侧边栏折叠
-const collapsed = ref(false)
 const activePath = computed(() => route.path)
 
 function iconByName(name?: string) {
@@ -27,16 +26,15 @@ async function onLogout() {
 
 <template>
   <el-container class="admin-layout">
-    <el-aside :width="collapsed ? '64px' : '220px'" class="aside">
+    <el-aside width="220px" class="aside">
       <div class="brand" @click="router.push('/')">
-        <span class="logo-text" v-if="!collapsed">羽毛球后台</span>
-        <span v-else>羽</span>
+        <span class="logo-text">羽毛球后台</span>
       </div>
       <el-menu :default-active="activePath" class="menu" router :collapse="collapsed">
         <template v-for="item in menuConfig" :key="item.path">
           <el-menu-item :index="item.path">
-            <component v-if="iconByName(item.icon)" :is="iconByName(item.icon)" />
-            <span>{{ item.title }}</span>
+            <!-- 不展示图标，仅文字，更清爽 -->
+            <span class="menu-title">{{ item.title }}</span>
           </el-menu-item>
         </template>
       </el-menu>
@@ -45,7 +43,6 @@ async function onLogout() {
     <el-container>
       <el-header class="header">
         <div class="left">
-          <el-button text @click="collapsed = !collapsed" :icon="collapsed ? Icons.Expand : Icons.Fold" />
           <el-breadcrumb separator="/" class="breadcrumb">
             <el-breadcrumb-item to="/dashboard">首页</el-breadcrumb-item>
             <el-breadcrumb-item v-for="(bc, idx) in (route.meta.breadcrumb || [])" :key="idx" :to="bc.path">{{ bc.title }}</el-breadcrumb-item>
@@ -78,7 +75,7 @@ async function onLogout() {
 
 <style scoped>
 .admin-layout { min-height: 100vh; }
-.aside { border-right: 1px solid #eef0f4; }
+.aside { border-right: 1px solid #eef0f4; background: #fff; }
 .brand { height: 56px; display:flex; align-items:center; gap:10px; padding:0 12px; font-weight:600; cursor:pointer; }
 .logo-text { font-size: 16px; }
 .menu { border-right: none; }
@@ -89,4 +86,5 @@ async function onLogout() {
 .name { color:#374151; }
 .main { background: #f7f8fa; padding: 16px; }
 .content-card { min-height: calc(100vh - 56px - 32px); }
+.menu-title { margin-left: 4px; }
 </style>
