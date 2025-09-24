@@ -2,7 +2,6 @@
 /* eslint-disable vue/multi-word-component-names, @typescript-eslint/no-explicit-any */
 // 注册页面 - 使用 Element Plus 表单
 import { ref } from 'vue'
-import { authApi } from '../api/auth'
 import { useAuthStore } from '../stores/auth'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
@@ -12,7 +11,6 @@ const phone = ref('')
 const nickname = ref('')
 const password = ref('')
 const confirmPassword = ref('')
-const loading = ref(false)
 const error = ref('')
 
 const router = useRouter()
@@ -27,17 +25,29 @@ const onRegister = async () => {
     error.value = '两次输入的密码不一致'
     return
   }
-  loading.value = true
+
   error.value = ''
+
   try {
-    const resp = await authApi.register({ phone: phone.value, nickname: nickname.value, password: password.value })
-    auth.setAuth(resp.token, resp.user)
-    ElMessage.success('注册成功，已自动登录')
-    router.push('/')
+    // 使用store的register方法
+    const success = await auth.register({
+      phone: phone.value,
+      nickname: nickname.value,
+      password: password.value,
+      confirmPassword: confirmPassword.value
+    })
+
+    if (success) {
+      // 注册成功后自动登录
+      await auth.login({
+        phone: phone.value,
+        password: password.value
+      })
+    } else {
+      error.value = '注册失败，请重试'
+    }
   } catch (e: any) {
     error.value = e.message || '注册失败'
-  } finally {
-    loading.value = false
   }
 }
 
@@ -70,8 +80,8 @@ const goLogin = () => router.push('/login')
         <el-form-item label="确认密码">
           <el-input v-model="confirmPassword" type="password" placeholder="请再次输入密码" show-password :prefix-icon="Lock" size="large" @keyup.enter="onRegister" />
         </el-form-item>
-        <el-button type="primary" :loading="loading" class="submit-btn" @click="onRegister" size="large">
-          {{ loading ? '注册中...' : '注册' }}
+        <el-button type="primary" :loading="auth.isLoggingIn" class="submit-btn" @click="onRegister" size="large">
+          {{ auth.isLoggingIn ? '注册中...' : '注册' }}
         </el-button>
         <div class="extra">
           <span>已有账号？</span>

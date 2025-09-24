@@ -29,34 +29,32 @@ export interface UserInfo {
  * 登录请求接口
  */
 export interface LoginRequest {
-  username: string
+  phone: string
   password: string
   captcha?: string
   rememberMe?: boolean
 }
 
 /**
- * 登录响应接口
+ * 登录响应接口（匹配后端返回格式）
  */
 export interface LoginResponse {
   token: string
-  refreshToken: string
-  expiresIn: number
-  userInfo: UserInfo
+  user: UserInfo
+  refreshToken?: string
+  expiresIn?: number
 }
 
 /**
- * 注册请求接口
+ * 注册请求接口（匹配后端格式）
  */
 export interface RegisterRequest {
-  username: string
+  phone: string
+  nickname: string
   password: string
-  confirmPassword: string
-  email: string
-  phone?: string
-  nickname?: string
-  captcha: string
-  inviteCode?: string
+  // 前端额外字段，不发送给后端
+  confirmPassword?: string
+  captcha?: string
 }
 
 /**
@@ -82,6 +80,7 @@ export enum AuthStatus {
 const TOKEN_KEY = 'badminton_admin_token'
 const REFRESH_TOKEN_KEY = 'badminton_admin_refresh_token'
 const USER_INFO_KEY = 'badminton_admin_user_info'
+const TOKEN_EXPIRE_TIME_KEY = 'badminton_admin_token_expire_time'
 
 /**
  * 用户认证状态管理
@@ -150,17 +149,19 @@ export const useAuthStore = defineStore('auth', () => {
         showError: true
       })
 
-      const { token: accessToken, refreshToken: newRefreshToken, userInfo: user } = response.data
+      const { token: accessToken, user, refreshToken: newRefreshToken, expiresIn = 3600 } = response.data
 
       // 保存认证信息
-      setToken(accessToken)
-      setRefreshToken(newRefreshToken)
+      setToken(accessToken, expiresIn)
+      if (newRefreshToken) {
+        setRefreshToken(newRefreshToken)
+      }
       setUserInfo(user)
-      
+
       authStatus.value = AuthStatus.LOGGED_IN
 
       // 设置token自动刷新
-      setupTokenRefresh(response.data.expiresIn)
+      setupTokenRefresh(expiresIn)
 
       ElMessage.success('登录成功')
       
@@ -203,7 +204,14 @@ export const useAuthStore = defineStore('auth', () => {
 
   async function register(registerData: RegisterRequest): Promise<boolean> {
     try {
-      await request.post('/auth/register', registerData, {
+      // 只发送后端需要的字段
+      const backendRequest = {
+        phone: registerData.phone,
+        nickname: registerData.nickname,
+        password: registerData.password
+      }
+
+      await request.post('/auth/register', backendRequest, {
         showLoading: true,
         loadingText: '正在注册...',
         showSuccess: true,
@@ -231,15 +239,17 @@ export const useAuthStore = defineStore('auth', () => {
         showError: false
       })
 
-      const { token: newToken, refreshToken: newRefreshToken } = response.data
+      const { token: newToken, refreshToken: newRefreshToken, expiresIn = 3600 } = response.data
 
-      setToken(newToken)
-      setRefreshToken(newRefreshToken)
-      
+      setToken(newToken, expiresIn)
+      if (newRefreshToken) {
+        setRefreshToken(newRefreshToken)
+      }
+
       authStatus.value = AuthStatus.LOGGED_IN
 
       // 重新设置token刷新定时器
-      setupTokenRefresh(response.data.expiresIn)
+      setupTokenRefresh(expiresIn)
 
       return true
     } catch (error) {
@@ -306,9 +316,14 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   // 工具方法
-  function setToken(newToken: string) {
+  function setToken(newToken: string, expiresIn?: number) {
     token.value = newToken
     localStorage.setItem(TOKEN_KEY, newToken)
+
+    // 保存token过期时间 (默认60分钟)
+    const expireSeconds = expiresIn || (60 * 60) // 默认60分钟
+    const expireTime = Date.now() + (expireSeconds * 1000)
+    localStorage.setItem(TOKEN_EXPIRE_TIME_KEY, expireTime.toString())
   }
 
   function setRefreshToken(newRefreshToken: string) {
@@ -330,12 +345,31 @@ export const useAuthStore = defineStore('auth', () => {
     localStorage.removeItem(TOKEN_KEY)
     localStorage.removeItem(REFRESH_TOKEN_KEY)
     localStorage.removeItem(USER_INFO_KEY)
+    localStorage.removeItem(TOKEN_EXPIRE_TIME_KEY)
 
     // 清理定时器
     if (refreshTokenTimer.value) {
       clearTimeout(refreshTokenTimer.value)
       refreshTokenTimer.value = null
     }
+  }
+
+  // 检查token是否过期
+  function isTokenExpired(): boolean {
+    const expireTimeStr = localStorage.getItem(TOKEN_EXPIRE_TIME_KEY)
+    if (!expireTimeStr) return true
+
+    const expireTime = parseInt(expireTimeStr)
+    return Date.now() >= expireTime
+  }
+
+  // 检查token是否即将过期（5分钟内）
+  function isTokenExpiringSoon(): boolean {
+    const expireTimeStr = localStorage.getItem(TOKEN_EXPIRE_TIME_KEY)
+    if (!expireTimeStr) return true
+
+    const expireTime = parseInt(expireTimeStr)
+    return (expireTime - Date.now()) <= (5 * 60 * 1000) // 5分钟
   }
 
   function setupTokenRefresh(expiresIn: number) {
@@ -358,24 +392,37 @@ export const useAuthStore = defineStore('auth', () => {
       const savedRefreshToken = localStorage.getItem(REFRESH_TOKEN_KEY)
       const savedUserInfo = localStorage.getItem(USER_INFO_KEY)
 
-      if (savedToken) {
-        token.value = savedToken
-      }
-
-      if (savedRefreshToken) {
-        refreshToken.value = savedRefreshToken
-      }
-
-      if (savedUserInfo) {
-        userInfo.value = JSON.parse(savedUserInfo)
-      }
-
-      // 如果有token，设置为已登录状态
       if (savedToken && savedUserInfo) {
+        // 检查token是否过期
+        if (isTokenExpired()) {
+          // token已过期
+          if (savedRefreshToken) {
+            // 尝试刷新token
+            refreshAccessToken()
+          } else {
+            // 没有refresh token，清理过期数据
+            clearAuthData()
+            ElMessage.warning('登录已过期，请重新登录')
+          }
+          return
+        }
+
+        // token未过期，恢复认证状态
+        token.value = savedToken
+        refreshToken.value = savedRefreshToken || ''
+        userInfo.value = JSON.parse(savedUserInfo)
         authStatus.value = AuthStatus.LOGGED_IN
-        
-        // 尝试刷新用户信息
+
+        // 检查是否即将过期，如果是则尝试刷新
+        if (isTokenExpiringSoon() && savedRefreshToken) {
+          refreshAccessToken()
+        }
+
+        // 尝试获取最新用户信息
         getUserInfo()
+      } else {
+        // 没有完整的认证信息
+        clearAuthData()
       }
     } catch (error) {
       console.warn('加载认证数据失败:', error)

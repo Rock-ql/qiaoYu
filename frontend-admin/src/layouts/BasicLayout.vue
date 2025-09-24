@@ -11,6 +11,7 @@ const route = useRoute()
 const auth = useAuthStore()
 
 // 侧边栏折叠
+const collapsed = ref(false)
 const activePath = computed(() => route.path)
 
 function iconByName(name?: string) {

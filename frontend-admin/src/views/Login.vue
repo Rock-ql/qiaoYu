@@ -2,16 +2,13 @@
 /* eslint-disable vue/multi-word-component-names, @typescript-eslint/no-explicit-any */
 // 登录页面 - 采用 Element Plus 重构交互与样式
 import { ref } from 'vue'
-import { authApi } from '../api/auth'
 import { useAuthStore } from '../stores/auth'
 import { useRouter } from 'vue-router'
-import { ElMessage } from 'element-plus'
 import { Iphone, Lock } from '@element-plus/icons-vue'
 
 // 表单状态
 const phone = ref('')
 const password = ref('')
-const loading = ref(false)
 const error = ref('')
 const router = useRouter()
 const auth = useAuthStore()
@@ -22,18 +19,21 @@ const onLogin = async () => {
     error.value = '请输入手机号与密码'
     return
   }
-  loading.value = true
+
   error.value = ''
+
   try {
-    const resp = await authApi.login({ phone: phone.value, password: password.value })
-    // 兼容后端返回 { token, user }
-    auth.setAuth(resp.token, resp.user)
-    ElMessage.success('登录成功')
-    router.push('/')
+    // 使用store的login方法
+    const success = await auth.login({
+      phone: phone.value,
+      password: password.value
+    })
+
+    if (!success) {
+      error.value = '登录失败，请检查账号密码'
+    }
   } catch (e: any) {
     error.value = e.message || '登录失败'
-  } finally {
-    loading.value = false
   }
 }
 
@@ -61,8 +61,8 @@ const goRegister = () => router.push('/register')
         <el-form-item label="密码">
           <el-input v-model="password" type="password" placeholder="请输入密码" show-password :prefix-icon="Lock" size="large" @keyup.enter="onLogin" />
         </el-form-item>
-        <el-button type="primary" :loading="loading" class="submit-btn" @click="onLogin" size="large">
-          {{ loading ? '登录中...' : '登录' }}
+        <el-button type="primary" :loading="auth.isLoggingIn" class="submit-btn" @click="onLogin" size="large">
+          {{ auth.isLoggingIn ? '登录中...' : '登录' }}
         </el-button>
         <div class="extra">
           <span>还没有账号？</span>

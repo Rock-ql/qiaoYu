@@ -297,8 +297,10 @@ class HttpClient {
           type = ErrorType.AUTH_ERROR
           // 清除认证信息并跳转到登录页
           const authStore = useAuthStore()
-          authStore.logout()
-          router.push('/login')
+          authStore.logout(false).then(() => {
+            ElMessage.warning('登录已过期，请重新登录')
+            router.push('/login')
+          })
           break
         case ResponseCode.FORBIDDEN:
           message = '没有权限访问该资源'
@@ -347,13 +349,14 @@ class HttpClient {
   /**
    * 处理业务错误
    */
-  private handleBusinessError(error: ApiError, config: RequestConfig): Promise<never> {
+  private async handleBusinessError(error: ApiError, config: RequestConfig): Promise<never> {
     // 特殊业务错误处理
     switch (error.code) {
       case ResponseCode.UNAUTHORIZED:
         // 认证失败
         const authStore = useAuthStore()
-        authStore.logout()
+        await authStore.logout(false) // 不显示退出成功消息
+        ElMessage.warning('登录已过期，请重新登录')
         router.push('/login')
         break
       case ResponseCode.FORBIDDEN:
