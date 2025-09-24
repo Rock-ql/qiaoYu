@@ -19,13 +19,13 @@ router.beforeEach((to, from, next) => {
   // 检查是否需要认证
   const requireAuth = to.meta.requireAuth !== false // 默认需要认证，除非明确设置为false
   
-  if (requireAuth && !auth.isAuthed()) {
+  if (requireAuth && !auth.isLoggedIn) {
     // 未认证，跳转到登录页
     next({
       path: '/login',
       query: { redirect: to.fullPath } // 保存要跳转的页面
     })
-  } else if (to.path === '/login' && auth.isAuthed()) {
+  } else if (to.path === '/login' && auth.isLoggedIn) {
     // 已认证用户访问登录页，重定向到首页
     next({ path: '/' })
   } else {
