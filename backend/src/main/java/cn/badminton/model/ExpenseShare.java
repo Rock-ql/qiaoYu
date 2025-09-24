@@ -1,49 +1,64 @@
 package cn.badminton.model;
 
+import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
  * 费用分摊实体模型
- * Redis存储结构: badminton:share:{share_id} (Hash)
- * 
+ * MySQL存储 + Redis缓存
+ *
  * 作者: xiaolei
  */
+@Entity
+@Table(name = "expense_share",
+       uniqueConstraints = {@UniqueConstraint(name = "uk_expense_user", columnNames = {"expense_id", "user_id"})},
+       indexes = {
+           @Index(name = "idx_expense_id", columnList = "expense_id"),
+           @Index(name = "idx_user_id", columnList = "user_id"),
+           @Index(name = "idx_status", columnList = "status"),
+           @Index(name = "idx_settled_at", columnList = "settled_at")
+       })
 public class ExpenseShare extends BaseEntity {
     
     /**
      * 关联的费用记录ID
      */
+    @Column(name = "expense_id", length = 36, nullable = false)
     @NotBlank(message = "费用记录ID不能为空")
     private String expenseId;
-    
+
     /**
      * 分摊用户ID
      */
+    @Column(name = "user_id", length = 36, nullable = false)
     @NotBlank(message = "用户ID不能为空")
     private String userId;
-    
+
     /**
      * 分摊金额
      * 最小值0.01，最多2位小数
      */
+    @Column(name = "amount", nullable = false, precision = 8, scale = 2)
     @NotNull(message = "分摊金额不能为空")
     @DecimalMin(value = "0.01", message = "分摊金额必须大于0")
     @Digits(integer = 8, fraction = 2, message = "分摊金额格式不正确")
     private BigDecimal amount;
-    
+
     /**
      * 分摊状态：1-待结算 2-已结算
      */
+    @Column(name = "status", nullable = false)
     @NotNull(message = "分摊状态不能为空")
     @Min(value = 1, message = "分摊状态值无效")
     @Max(value = 2, message = "分摊状态值无效")
     private Integer status = STATUS_PENDING;
-    
+
     /**
      * 结算时间
      */
+    @Column(name = "settled_at")
     private LocalDateTime settledAt;
 
     // 状态常量

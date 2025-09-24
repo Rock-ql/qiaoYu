@@ -1,76 +1,94 @@
 package cn.badminton.model;
 
+import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
+import org.hibernate.annotations.GenericGenerator;
 import java.math.BigDecimal;
 
 /**
  * 用户实体模型
- * Redis存储结构: badminton:user:{user_id} (Hash)
- * 
+ * MySQL存储 + Redis缓存
+ *
  * 作者: xiaolei
  */
+@Entity
+@Table(name = "user",
+       uniqueConstraints = {@UniqueConstraint(name = "uk_phone", columnNames = "phone")},
+       indexes = {
+           @Index(name = "idx_wx_open_id", columnList = "wx_open_id"),
+           @Index(name = "idx_status", columnList = "status"),
+           @Index(name = "idx_created_at", columnList = "created_at")
+       })
 public class User extends BaseEntity {
     
     /**
      * 手机号（登录凭证）
      * 必须是11位中国手机号格式
      */
+    @Column(name = "phone", length = 11, nullable = false)
     @NotBlank(message = "手机号不能为空")
     @Pattern(regexp = "^1[3-9]\\d{9}$", message = "手机号格式不正确")
     private String phone;
-    
+
     /**
      * 用户昵称
      * 长度限制2-20个字符，不能包含特殊字符
      */
+    @Column(name = "nickname", length = 50, nullable = false)
     @NotBlank(message = "昵称不能为空")
     @Size(min = 2, max = 20, message = "昵称长度必须在2-20个字符之间")
     @Pattern(regexp = "^[\\u4e00-\\u9fa5a-zA-Z0-9_]+$", message = "昵称不能包含特殊字符")
     private String nickname;
-    
+
     /**
      * 用户密码（加密存储）
      */
+    @Column(name = "password", nullable = false)
     @NotBlank(message = "密码不能为空")
     @Size(min = 6, max = 100, message = "密码长度必须在6-100个字符之间")
     private String password;
-    
+
     /**
      * 头像URL
-     * 必须是有效的URL格式
      */
+    @Column(name = "avatar", length = 500, nullable = false)
     private String avatar = "";
-    
+
     /**
      * 用户状态：1-正常，2-禁用
      */
+    @Column(name = "status", nullable = false)
     @NotNull(message = "用户状态不能为空")
     @Min(value = 1, message = "用户状态值无效")
     @Max(value = 2, message = "用户状态值无效")
     private Integer status = 1;
-    
+
     /**
      * 参与活动总数
      */
+    @Column(name = "total_activities", nullable = false)
     @Min(value = 0, message = "参与活动总数不能为负数")
     private Integer totalActivities = 0;
-    
+
     /**
      * 总消费金额
      * 使用BigDecimal确保精度
      */
+    @Column(name = "total_expense", nullable = false, precision = 10, scale = 2)
     @DecimalMin(value = "0.00", message = "总消费金额不能为负数")
     @Digits(integer = 10, fraction = 2, message = "总消费金额格式不正确")
     private BigDecimal totalExpense = BigDecimal.ZERO;
-    
+
     /**
      * 微信OpenID（用于微信登录）
      */
+    @Column(name = "wx_open_id", length = 50, nullable = false)
     private String wxOpenId = "";
-    
+
     /**
      * 微信UnionID（用于跨应用用户识别）
      */
+    @Column(name = "wx_union_id", length = 50, nullable = false)
     private String wxUnionId = "";
 
     public User() {

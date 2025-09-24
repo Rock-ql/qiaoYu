@@ -1,55 +1,70 @@
 package cn.badminton.model;
 
+import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
  * 费用记录实体模型
- * Redis存储结构: badminton:expense:{expense_id} (Hash)
- * 
+ * MySQL存储 + Redis缓存
+ *
  * 作者: xiaolei
  */
+@Entity
+@Table(name = "expense_record",
+       indexes = {
+           @Index(name = "idx_activity_id", columnList = "activity_id"),
+           @Index(name = "idx_payer_id", columnList = "payer_id"),
+           @Index(name = "idx_type", columnList = "type"),
+           @Index(name = "idx_created_at", columnList = "created_at")
+       })
 public class ExpenseRecord extends BaseEntity {
     
     /**
      * 关联的活动ID
      */
+    @Column(name = "activity_id", length = 36, nullable = false)
     @NotBlank(message = "活动ID不能为空")
     private String activityId;
-    
+
     /**
      * 付款人用户ID
      */
+    @Column(name = "payer_id", length = 36, nullable = false)
     @NotBlank(message = "付款人ID不能为空")
     private String payerId;
-    
+
     /**
      * 费用类型：venue-场地费 food-餐饮费 transport-交通费 other-其他
      */
+    @Column(name = "type", length = 20, nullable = false)
     @NotBlank(message = "费用类型不能为空")
     @Pattern(regexp = "^(venue|food|transport|other)$", message = "费用类型无效")
     private String type;
-    
+
     /**
      * 费用描述
      */
+    @Column(name = "description", length = 200, nullable = false)
     @NotBlank(message = "费用描述不能为空")
     @Size(max = 200, message = "费用描述长度不能超过200个字符")
     private String description;
-    
+
     /**
      * 总金额
      * 最小值0.01，最多2位小数
      */
+    @Column(name = "total_amount", nullable = false, precision = 8, scale = 2)
     @NotNull(message = "总金额不能为空")
     @DecimalMin(value = "0.01", message = "总金额必须大于0.01")
     @Digits(integer = 8, fraction = 2, message = "总金额格式不正确")
     private BigDecimal totalAmount;
-    
+
     /**
      * 分摊方式：equal-平均分摊 custom-自定义分摊
      */
+    @Column(name = "split_method", length = 20, nullable = false)
     @NotBlank(message = "分摊方式不能为空")
     @Pattern(regexp = "^(equal|custom)$", message = "分摊方式无效")
     private String splitMethod = "equal";

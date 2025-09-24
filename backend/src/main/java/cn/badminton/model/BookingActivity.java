@@ -1,91 +1,109 @@
 package cn.badminton.model;
 
+import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
  * 约球活动实体模型
- * Redis存储结构: badminton:activity:{activity_id} (Hash)
- * 
+ * MySQL存储 + Redis缓存
+ *
  * 作者: xiaolei
  */
+@Entity
+@Table(name = "booking_activity",
+       indexes = {
+           @Index(name = "idx_organizer", columnList = "organizer"),
+           @Index(name = "idx_status", columnList = "status"),
+           @Index(name = "idx_venue", columnList = "venue"),
+           @Index(name = "idx_start_time", columnList = "start_time"),
+           @Index(name = "idx_created_at", columnList = "created_at")
+       })
 public class BookingActivity extends BaseEntity {
     
     /**
      * 活动标题
      * 长度限制5-50个字符
      */
+    @Column(name = "title", length = 100, nullable = false)
     @NotBlank(message = "活动标题不能为空")
     @Size(min = 5, max = 50, message = "活动标题长度必须在5-50个字符之间")
     private String title;
-    
+
     /**
      * 发起人用户ID
      */
+    @Column(name = "organizer", length = 36, nullable = false)
     @NotBlank(message = "发起人不能为空")
     private String organizer;
-    
+
     /**
      * 场地名称
      */
+    @Column(name = "venue", length = 100, nullable = false)
     @NotBlank(message = "场地名称不能为空")
     @Size(max = 100, message = "场地名称长度不能超过100个字符")
     private String venue;
-    
+
     /**
      * 详细地址
      */
+    @Column(name = "address", length = 200, nullable = false)
     @Size(max = 200, message = "详细地址长度不能超过200个字符")
     private String address = "";
-    
+
     /**
      * 开始时间
-     * 必须晚于当前时间
      */
+    @Column(name = "start_time", nullable = false)
     @NotNull(message = "开始时间不能为空")
-    @Future(message = "开始时间必须晚于当前时间")
     private LocalDateTime startTime;
-    
+
     /**
      * 结束时间
-     * 必须晚于开始时间
      */
+    @Column(name = "end_time", nullable = false)
     @NotNull(message = "结束时间不能为空")
     private LocalDateTime endTime;
-    
+
     /**
      * 最大人数
      * 限制2-20人
      */
+    @Column(name = "max_players", nullable = false)
     @NotNull(message = "最大人数不能为空")
     @Min(value = 2, message = "最大人数不能少于2人")
     @Max(value = 20, message = "最大人数不能超过20人")
     private Integer maxPlayers;
-    
+
     /**
      * 当前人数
      */
+    @Column(name = "current_players", nullable = false)
     @Min(value = 0, message = "当前人数不能为负数")
     private Integer currentPlayers = 1;
-    
+
     /**
      * 预估费用
      * 非负数，最多2位小数
      */
+    @Column(name = "fee", nullable = false, precision = 8, scale = 2)
     @DecimalMin(value = "0.00", message = "预估费用不能为负数")
     @Digits(integer = 8, fraction = 2, message = "预估费用格式不正确")
     private BigDecimal fee = BigDecimal.ZERO;
-    
+
     /**
      * 活动描述
      */
+    @Column(name = "description", columnDefinition = "TEXT")
     @Size(max = 500, message = "活动描述长度不能超过500个字符")
     private String description = "";
-    
+
     /**
      * 活动状态：1-待确认 2-进行中 3-已完成 4-已取消
      */
+    @Column(name = "status", nullable = false)
     @NotNull(message = "活动状态不能为空")
     @Min(value = 1, message = "活动状态值无效")
     @Max(value = 4, message = "活动状态值无效")

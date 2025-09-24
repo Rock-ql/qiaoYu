@@ -1,45 +1,60 @@
 package cn.badminton.model;
 
+import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import java.time.LocalDateTime;
 
 /**
  * 参与记录实体模型
- * Redis存储结构: badminton:participation:{participation_id} (Hash)
- * 
+ * MySQL存储 + Redis缓存
+ *
  * 作者: xiaolei
  */
+@Entity
+@Table(name = "participation",
+       uniqueConstraints = {@UniqueConstraint(name = "uk_activity_user", columnNames = {"activity_id", "user_id"})},
+       indexes = {
+           @Index(name = "idx_activity_id", columnList = "activity_id"),
+           @Index(name = "idx_user_id", columnList = "user_id"),
+           @Index(name = "idx_status", columnList = "status"),
+           @Index(name = "idx_join_time", columnList = "join_time")
+       })
 public class Participation extends BaseEntity {
     
     /**
      * 关联的活动ID
      */
+    @Column(name = "activity_id", length = 36, nullable = false)
     @NotBlank(message = "活动ID不能为空")
     private String activityId;
-    
+
     /**
      * 参与者用户ID
      */
+    @Column(name = "user_id", length = 36, nullable = false)
     @NotBlank(message = "用户ID不能为空")
     private String userId;
-    
+
     /**
      * 参与状态：1-已确认 2-已取消
      */
+    @Column(name = "status", nullable = false)
     @NotNull(message = "参与状态不能为空")
     @Min(value = 1, message = "参与状态值无效")
     @Max(value = 2, message = "参与状态值无效")
     private Integer status = STATUS_CONFIRMED;
-    
+
     /**
      * 参与时间
      */
+    @Column(name = "join_time", nullable = false)
     @NotNull(message = "参与时间不能为空")
     private LocalDateTime joinTime;
-    
+
     /**
      * 是否为发起人
      */
+    @Column(name = "is_organizer", nullable = false, columnDefinition = "tinyint(1)")
     @NotNull(message = "是否为发起人不能为空")
     private Boolean isOrganizer = false;
 
