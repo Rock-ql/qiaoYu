@@ -18,16 +18,18 @@ router.beforeEach((to, from, next) => {
   
   // 检查是否需要认证
   const requireAuth = to.meta.requireAuth !== false // 默认需要认证，除非明确设置为false
+  const authed = auth.isLoggedIn.value || !!localStorage.getItem('badminton_admin_token')
 
-  if (requireAuth && !auth.isLoggedIn.value) {
+  if (requireAuth && !authed) {
     // 未认证，跳转到登录页
     next({
       path: '/login',
       query: { redirect: to.fullPath } // 保存要跳转的页面
     })
-  } else if (to.path === '/login' && auth.isLoggedIn.value) {
+  } else if (to.path === '/login' && authed) {
     // 已认证用户访问登录页，重定向到首页
-    next({ path: '/' })
+    const redirect = (to.query.redirect as string) || '/dashboard'
+    next(redirect)
   } else {
     // 权限验证通过
     next()

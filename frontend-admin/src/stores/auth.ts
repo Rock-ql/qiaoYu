@@ -169,7 +169,7 @@ export const useAuthStore = defineStore('auth', () => {
       
       // 跳转到首页或之前访问的页面
       const redirect = router.currentRoute.value.query.redirect as string
-      await router.push(redirect || '/dashboard')
+      await router.replace(redirect || '/dashboard')
 
       return true
     } catch (error) {
