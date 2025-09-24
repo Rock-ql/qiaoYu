@@ -149,7 +149,9 @@ export const useAuthStore = defineStore('auth', () => {
         showError: true
       })
 
-      const { token: accessToken, user, refreshToken: newRefreshToken, expiresIn = 3600 } = response.data
+      // 兼容返回包裹 {code,message,data} 或直接数据两种格式
+      const payload: any = (response as any)?.data?.data ?? (response as any)?.data ?? response
+      const { token: accessToken, user, refreshToken: newRefreshToken, expiresIn = 3600 } = payload
 
       // 保存认证信息
       setToken(accessToken, expiresIn)
@@ -239,7 +241,8 @@ export const useAuthStore = defineStore('auth', () => {
         showError: false
       })
 
-      const { token: newToken, refreshToken: newRefreshToken, expiresIn = 3600 } = response.data
+      const payload: any = (response as any)?.data?.data ?? (response as any)?.data ?? response
+      const { token: newToken, refreshToken: newRefreshToken, expiresIn = 3600 } = payload
 
       setToken(newToken, expiresIn)
       if (newRefreshToken) {
@@ -274,8 +277,9 @@ export const useAuthStore = defineStore('auth', () => {
         showError: false
       })
 
-      setUserInfo(response.data)
-      return response.data
+      const payload: any = (response as any)?.data?.data ?? (response as any)?.data ?? response
+      setUserInfo(payload)
+      return payload
     } catch (error) {
       console.error('获取用户信息失败:', error)
       return null
@@ -291,7 +295,8 @@ export const useAuthStore = defineStore('auth', () => {
         successText: '更新成功'
       })
 
-      setUserInfo(response.data)
+      const payload: any = (response as any)?.data?.data ?? (response as any)?.data ?? response
+      setUserInfo(payload)
       return true
     } catch (error) {
       console.error('更新用户信息失败:', error)
@@ -503,4 +508,3 @@ export const useAuthStore = defineStore('auth', () => {
     checkRoute
   }
 })
-
