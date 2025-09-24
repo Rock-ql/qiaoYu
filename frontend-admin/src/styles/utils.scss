@@ -1,0 +1,335 @@
+// 羽毛球预约系统后台管理 - 工具类样式
+// ===========================================
+
+@import './variables.scss';
+@import './mixins.scss';
+
+// 1. 间距工具类
+// -------------------------------------------
+// 外边距工具类
+.m-0 { margin: 0 !important; }
+.m-xs { margin: $margin-xs !important; }
+.m-sm { margin: $margin-sm !important; }
+.m-md { margin: $margin-md !important; }
+.m-lg { margin: $margin-lg !important; }
+.m-xl { margin: $margin-xl !important; }
+
+// 垂直外边距
+.mv-0 { margin-top: 0 !important; margin-bottom: 0 !important; }
+.mv-xs { margin-top: $margin-xs !important; margin-bottom: $margin-xs !important; }
+.mv-sm { margin-top: $margin-sm !important; margin-bottom: $margin-sm !important; }
+.mv-md { margin-top: $margin-md !important; margin-bottom: $margin-md !important; }
+.mv-lg { margin-top: $margin-lg !important; margin-bottom: $margin-lg !important; }
+.mv-xl { margin-top: $margin-xl !important; margin-bottom: $margin-xl !important; }
+
+// 水平外边距
+.mh-0 { margin-left: 0 !important; margin-right: 0 !important; }
+.mh-xs { margin-left: $margin-xs !important; margin-right: $margin-xs !important; }
+.mh-sm { margin-left: $margin-sm !important; margin-right: $margin-sm !important; }
+.mh-md { margin-left: $margin-md !important; margin-right: $margin-md !important; }
+.mh-lg { margin-left: $margin-lg !important; margin-right: $margin-lg !important; }
+.mh-xl { margin-left: $margin-xl !important; margin-right: $margin-xl !important; }
+
+// 单方向外边距
+.mt-0 { margin-top: 0 !important; }
+.mt-xs { margin-top: $margin-xs !important; }
+.mt-sm { margin-top: $margin-sm !important; }
+.mt-md { margin-top: $margin-md !important; }
+.mt-lg { margin-top: $margin-lg !important; }
+.mt-xl { margin-top: $margin-xl !important; }
+
+.mb-0 { margin-bottom: 0 !important; }
+.mb-xs { margin-bottom: $margin-xs !important; }
+.mb-sm { margin-bottom: $margin-sm !important; }
+.mb-md { margin-bottom: $margin-md !important; }
+.mb-lg { margin-bottom: $margin-lg !important; }
+.mb-xl { margin-bottom: $margin-xl !important; }
+
+.ml-0 { margin-left: 0 !important; }
+.ml-xs { margin-left: $margin-xs !important; }
+.ml-sm { margin-left: $margin-sm !important; }
+.ml-md { margin-left: $margin-md !important; }
+.ml-lg { margin-left: $margin-lg !important; }
+.ml-xl { margin-left: $margin-xl !important; }
+
+.mr-0 { margin-right: 0 !important; }
+.mr-xs { margin-right: $margin-xs !important; }
+.mr-sm { margin-right: $margin-sm !important; }
+.mr-md { margin-right: $margin-md !important; }
+.mr-lg { margin-right: $margin-lg !important; }
+.mr-xl { margin-right: $margin-xl !important; }
+
+// 内边距工具类
+.p-0 { padding: 0 !important; }
+.p-xs { padding: $padding-xs !important; }
+.p-sm { padding: $padding-sm !important; }
+.p-md { padding: $padding-md !important; }
+.p-lg { padding: $padding-lg !important; }
+.p-xl { padding: $padding-xl !important; }
+
+// 垂直内边距
+.pv-0 { padding-top: 0 !important; padding-bottom: 0 !important; }
+.pv-xs { padding-top: $padding-xs !important; padding-bottom: $padding-xs !important; }
+.pv-sm { padding-top: $padding-sm !important; padding-bottom: $padding-sm !important; }
+.pv-md { padding-top: $padding-md !important; padding-bottom: $padding-md !important; }
+.pv-lg { padding-top: $padding-lg !important; padding-bottom: $padding-lg !important; }
+.pv-xl { padding-top: $padding-xl !important; padding-bottom: $padding-xl !important; }
+
+// 水平内边距
+.ph-0 { padding-left: 0 !important; padding-right: 0 !important; }
+.ph-xs { padding-left: $padding-xs !important; padding-right: $padding-xs !important; }
+.ph-sm { padding-left: $padding-sm !important; padding-right: $padding-sm !important; }
+.ph-md { padding-left: $padding-md !important; padding-right: $padding-md !important; }
+.ph-lg { padding-left: $padding-lg !important; padding-right: $padding-lg !important; }
+.ph-xl { padding-left: $padding-xl !important; padding-right: $padding-xl !important; }
+
+// 2. 布局工具类
+// -------------------------------------------
+.d-none { display: none !important; }
+.d-block { display: block !important; }
+.d-inline { display: inline !important; }
+.d-inline-block { display: inline-block !important; }
+.d-flex { display: flex !important; }
+.d-inline-flex { display: inline-flex !important; }
+
+// Flex布局工具类
+.flex-row { flex-direction: row !important; }
+.flex-column { flex-direction: column !important; }
+.flex-wrap { flex-wrap: wrap !important; }
+.flex-nowrap { flex-wrap: nowrap !important; }
+
+.justify-start { justify-content: flex-start !important; }
+.justify-center { justify-content: center !important; }
+.justify-end { justify-content: flex-end !important; }
+.justify-between { justify-content: space-between !important; }
+.justify-around { justify-content: space-around !important; }
+
+.align-start { align-items: flex-start !important; }
+.align-center { align-items: center !important; }
+.align-end { align-items: flex-end !important; }
+.align-baseline { align-items: baseline !important; }
+.align-stretch { align-items: stretch !important; }
+
+.flex-1 { flex: 1 !important; }
+.flex-auto { flex: auto !important; }
+.flex-none { flex: none !important; }
+
+// 位置工具类
+.position-static { position: static !important; }
+.position-relative { position: relative !important; }
+.position-absolute { position: absolute !important; }
+.position-fixed { position: fixed !important; }
+.position-sticky { position: sticky !important; }
+
+// 3. 文本工具类
+// -------------------------------------------
+.text-left { text-align: left !important; }
+.text-center { text-align: center !important; }
+.text-right { text-align: right !important; }
+.text-justify { text-align: justify !important; }
+
+.text-lowercase { text-transform: lowercase !important; }
+.text-uppercase { text-transform: uppercase !important; }
+.text-capitalize { text-transform: capitalize !important; }
+
+.font-weight-light { font-weight: $font-weight-light !important; }
+.font-weight-normal { font-weight: $font-weight-normal !important; }
+.font-weight-medium { font-weight: $font-weight-medium !important; }
+.font-weight-bold { font-weight: $font-weight-bold !important; }
+.font-weight-bolder { font-weight: $font-weight-bolder !important; }
+
+.font-size-xs { font-size: $font-size-xs !important; }
+.font-size-sm { font-size: $font-size-sm !important; }
+.font-size-base { font-size: $font-size-base !important; }
+.font-size-md { font-size: $font-size-md !important; }
+.font-size-lg { font-size: $font-size-lg !important; }
+.font-size-xl { font-size: $font-size-xl !important; }
+.font-size-xxl { font-size: $font-size-xxl !important; }
+
+// 文本颜色
+.text-primary { color: $text-primary !important; }
+.text-regular { color: $text-regular !important; }
+.text-secondary { color: $text-secondary !important; }
+.text-placeholder { color: $text-placeholder !important; }
+.text-white { color: $white !important; }
+
+.text-success { color: $success-color !important; }
+.text-warning { color: $warning-color !important; }
+.text-danger { color: $danger-color !important; }
+.text-info { color: $info-color !important; }
+
+// 文本省略
+.text-ellipsis { @include text-ellipsis; }
+.text-ellipsis-2 { @include text-ellipsis-multiline(2); }
+.text-ellipsis-3 { @include text-ellipsis-multiline(3); }
+
+// 4. 背景工具类
+// -------------------------------------------
+.bg-primary { background-color: $bg-primary !important; }
+.bg-secondary { background-color: $bg-secondary !important; }
+.bg-disabled { background-color: $bg-disabled !important; }
+
+.bg-success { background-color: $success-color !important; }
+.bg-warning { background-color: $warning-color !important; }
+.bg-danger { background-color: $danger-color !important; }
+.bg-info { background-color: $info-color !important; }
+
+.bg-success-light { background-color: $success-light !important; }
+.bg-warning-light { background-color: $warning-light !important; }
+.bg-danger-light { background-color: $danger-light !important; }
+.bg-info-light { background-color: $info-light !important; }
+
+// 5. 边框工具类
+// -------------------------------------------
+.border { border: 1px solid $border-primary !important; }
+.border-top { border-top: 1px solid $border-primary !important; }
+.border-bottom { border-bottom: 1px solid $border-primary !important; }
+.border-left { border-left: 1px solid $border-primary !important; }
+.border-right { border-right: 1px solid $border-primary !important; }
+
+.border-0 { border: 0 !important; }
+.border-top-0 { border-top: 0 !important; }
+.border-bottom-0 { border-bottom: 0 !important; }
+.border-left-0 { border-left: 0 !important; }
+.border-right-0 { border-right: 0 !important; }
+
+.border-primary { border-color: $border-primary !important; }
+.border-secondary { border-color: $border-secondary !important; }
+.border-light { border-color: $border-light !important; }
+
+// 圆角
+.rounded { border-radius: $border-radius-base !important; }
+.rounded-sm { border-radius: $border-radius-sm !important; }
+.rounded-md { border-radius: $border-radius-md !important; }
+.rounded-lg { border-radius: $border-radius-lg !important; }
+.rounded-xl { border-radius: $border-radius-xl !important; }
+.rounded-full { border-radius: $border-radius-round !important; }
+.rounded-0 { border-radius: 0 !important; }
+
+// 6. 阴影工具类
+// -------------------------------------------
+.shadow-none { box-shadow: none !important; }
+.shadow-light { box-shadow: $box-shadow-light !important; }
+.shadow-base { box-shadow: $box-shadow-base !important; }
+.shadow-dark { box-shadow: $box-shadow-dark !important; }
+
+// 7. 溢出工具类
+// -------------------------------------------
+.overflow-auto { overflow: auto !important; }
+.overflow-hidden { overflow: hidden !important; }
+.overflow-visible { overflow: visible !important; }
+.overflow-scroll { overflow: scroll !important; }
+
+.overflow-x-auto { overflow-x: auto !important; }
+.overflow-x-hidden { overflow-x: hidden !important; }
+.overflow-x-scroll { overflow-x: scroll !important; }
+
+.overflow-y-auto { overflow-y: auto !important; }
+.overflow-y-hidden { overflow-y: hidden !important; }
+.overflow-y-scroll { overflow-y: scroll !important; }
+
+// 8. 宽高工具类
+// -------------------------------------------
+.w-25 { width: 25% !important; }
+.w-50 { width: 50% !important; }
+.w-75 { width: 75% !important; }
+.w-100 { width: 100% !important; }
+.w-auto { width: auto !important; }
+
+.h-25 { height: 25% !important; }
+.h-50 { height: 50% !important; }
+.h-75 { height: 75% !important; }
+.h-100 { height: 100% !important; }
+.h-auto { height: auto !important; }
+
+.max-w-100 { max-width: 100% !important; }
+.max-h-100 { max-height: 100% !important; }
+
+.min-h-100 { min-height: 100% !important; }
+.min-h-screen { min-height: 100vh !important; }
+
+// 9. 光标工具类
+// -------------------------------------------
+.cursor-pointer { cursor: pointer !important; }
+.cursor-default { cursor: default !important; }
+.cursor-not-allowed { cursor: not-allowed !important; }
+.cursor-grab { cursor: grab !important; }
+.cursor-grabbing { cursor: grabbing !important; }
+
+// 10. 用户选择工具类
+// -------------------------------------------
+.user-select-none { @include no-select; }
+.user-select-auto { user-select: auto !important; }
+.user-select-text { user-select: text !important; }
+
+// 11. 响应式显示工具类
+// -------------------------------------------
+@include mobile-first($breakpoint-sm) {
+  .d-sm-none { display: none !important; }
+  .d-sm-block { display: block !important; }
+  .d-sm-flex { display: flex !important; }
+}
+
+@include respond-to(md) {
+  .d-md-none { display: none !important; }
+  .d-md-block { display: block !important; }
+  .d-md-flex { display: flex !important; }
+}
+
+@include respond-to(lg) {
+  .d-lg-none { display: none !important; }
+  .d-lg-block { display: block !important; }
+  .d-lg-flex { display: flex !important; }
+}
+
+// 12. 特殊工具类
+// -------------------------------------------
+.clearfix { @include clearfix; }
+.visually-hidden { @include visually-hidden; }
+
+// 卡片样式
+.card {
+  @include card-style;
+  
+  &.card-hover {
+    @include card-hover;
+  }
+}
+
+// 自定义滚动条
+.custom-scrollbar {
+  @include scrollbar-style;
+}
+
+// 加载骨架屏
+.loading-skeleton {
+  @include loading-skeleton;
+  border-radius: $border-radius-base;
+  height: 1.2em;
+}
+
+// 13. 动画工具类
+// -------------------------------------------
+.fade-in {
+  @include fade-in;
+}
+
+.slide-up {
+  @include slide-up;
+}
+
+.transition-all {
+  transition: $transition-base !important;
+}
+
+.transition-none {
+  transition: none !important;
+}
+
+// 14. Z-index工具类
+// -------------------------------------------
+.z-index-normal { z-index: $z-index-normal !important; }
+.z-index-top { z-index: $z-index-top !important; }
+.z-index-popper { z-index: $z-index-popper !important; }
+.z-index-message { z-index: $z-index-message !important; }
+.z-index-overlay { z-index: $z-index-overlay !important; }

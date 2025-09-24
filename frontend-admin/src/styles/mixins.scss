@@ -1,0 +1,331 @@
+// 羽毛球预约系统后台管理 - 样式混入
+// ===========================================
+
+@import './variables.scss';
+
+// 1. 响应式断点混入
+// -------------------------------------------
+@mixin respond-to($breakpoint) {
+  @if $breakpoint == xs {
+    @media (max-width: #{$breakpoint-xs - 1px}) {
+      @content;
+    }
+  }
+  @else if $breakpoint == sm {
+    @media (min-width: #{$breakpoint-sm}) {
+      @content;
+    }
+  }
+  @else if $breakpoint == md {
+    @media (min-width: #{$breakpoint-md}) {
+      @content;
+    }
+  }
+  @else if $breakpoint == lg {
+    @media (min-width: #{$breakpoint-lg}) {
+      @content;
+    }
+  }
+  @else if $breakpoint == xl {
+    @media (min-width: #{$breakpoint-xl}) {
+      @content;
+    }
+  }
+  @else {
+    @media (min-width: #{$breakpoint}) {
+      @content;
+    }
+  }
+}
+
+// 2. 移动端优先的响应式混入
+// -------------------------------------------
+@mixin mobile-first($breakpoint) {
+  @media (max-width: #{$breakpoint - 1px}) {
+    @content;
+  }
+}
+
+@mixin tablet-up {
+  @include respond-to(sm) {
+    @content;
+  }
+}
+
+@mixin desktop-up {
+  @include respond-to(md) {
+    @content;
+  }
+}
+
+@mixin large-desktop-up {
+  @include respond-to(lg) {
+    @content;
+  }
+}
+
+// 3. 布局混入
+// -------------------------------------------
+// Flexbox布局快捷方式
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+@mixin flex-start {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+@mixin flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+@mixin flex-column-center {
+  @include flex-column;
+  align-items: center;
+  justify-content: center;
+}
+
+// 4. 文本处理混入
+// -------------------------------------------
+// 单行文本省略
+@mixin text-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// 多行文本省略
+@mixin text-ellipsis-multiline($lines: 2) {
+  display: -webkit-box;
+  -webkit-line-clamp: $lines;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+// 文本无选择
+@mixin no-select {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+// 5. 按钮样式混入
+// -------------------------------------------
+@mixin button-style($bg-color, $text-color: $white, $border-color: $bg-color) {
+  background-color: $bg-color;
+  color: $text-color;
+  border: 1px solid $border-color;
+  padding: $padding-sm $padding-md;
+  border-radius: $border-radius-base;
+  cursor: pointer;
+  transition: $transition-base;
+  
+  &:hover {
+    background-color: darken($bg-color, 10%);
+    border-color: darken($border-color, 10%);
+  }
+  
+  &:active {
+    background-color: darken($bg-color, 15%);
+    border-color: darken($border-color, 15%);
+  }
+  
+  &:disabled {
+    background-color: $bg-disabled;
+    color: $text-placeholder;
+    border-color: $border-light;
+    cursor: not-allowed;
+    
+    &:hover {
+      background-color: $bg-disabled;
+      border-color: $border-light;
+    }
+  }
+}
+
+// 6. 卡片样式混入
+// -------------------------------------------
+@mixin card-style($shadow: $box-shadow-light) {
+  background: $bg-primary;
+  border-radius: $border-radius-md;
+  box-shadow: $shadow;
+  border: 1px solid $border-light;
+  overflow: hidden;
+}
+
+@mixin card-hover {
+  transition: $transition-base;
+  
+  &:hover {
+    box-shadow: $box-shadow-base;
+    transform: translateY(-2px);
+  }
+}
+
+// 7. 输入框样式混入
+// -------------------------------------------
+@mixin input-style {
+  padding: $padding-sm $padding-md;
+  border: 1px solid $border-primary;
+  border-radius: $border-radius-base;
+  font-size: $font-size-base;
+  color: $text-primary;
+  background-color: $bg-primary;
+  transition: $transition-base;
+  
+  &:focus {
+    outline: none;
+    border-color: $primary-color;
+    box-shadow: 0 0 0 2px rgba($primary-color, 0.2);
+  }
+  
+  &:disabled {
+    background-color: $bg-disabled;
+    color: $text-placeholder;
+    cursor: not-allowed;
+  }
+  
+  &::placeholder {
+    color: $text-placeholder;
+  }
+}
+
+// 8. 滚动条样式混入
+// -------------------------------------------
+@mixin scrollbar-style($width: 6px, $track-color: $bg-secondary, $thumb-color: $border-primary) {
+  &::-webkit-scrollbar {
+    width: $width;
+    height: $width;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: $track-color;
+    border-radius: $border-radius-base;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: $thumb-color;
+    border-radius: $border-radius-base;
+    
+    &:hover {
+      background: darken($thumb-color, 10%);
+    }
+  }
+}
+
+// 9. 阴影混入
+// -------------------------------------------
+@mixin box-shadow($shadow: $box-shadow-base) {
+  box-shadow: $shadow;
+}
+
+@mixin text-shadow($color: rgba(0, 0, 0, 0.3), $x: 1px, $y: 1px, $blur: 3px) {
+  text-shadow: $x $y $blur $color;
+}
+
+// 10. 动画混入
+// -------------------------------------------
+@mixin fade-in($duration: 0.3s) {
+  animation: fadeIn $duration ease-in-out;
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+}
+
+@mixin slide-up($duration: 0.3s, $distance: 20px) {
+  animation: slideUp $duration ease-out;
+  
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY($distance);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+// 11. 工具类混入
+// -------------------------------------------
+@mixin clearfix {
+  &::after {
+    content: '';
+    display: table;
+    clear: both;
+  }
+}
+
+@mixin visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+// 12. 表格样式混入
+// -------------------------------------------
+@mixin table-style {
+  width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+  
+  th,
+  td {
+    padding: $padding-md;
+    text-align: left;
+    border-bottom: 1px solid $border-light;
+  }
+  
+  th {
+    background-color: $bg-secondary;
+    font-weight: $font-weight-medium;
+    color: $text-primary;
+  }
+  
+  tr:hover {
+    background-color: rgba($primary-color, 0.05);
+  }
+}
+
+// 13. 加载状态混入
+// -------------------------------------------
+@mixin loading-skeleton {
+  background: linear-gradient(90deg, $bg-secondary 25%, rgba($bg-secondary, 0.5) 50%, $bg-secondary 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+  
+  @keyframes loading {
+    0% {
+      background-position: 200% 0;
+    }
+    100% {
+      background-position: -200% 0;
+    }
+  }
+}
